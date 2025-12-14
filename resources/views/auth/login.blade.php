@@ -1,3 +1,8 @@
+<div class="p-5 text-end">
+    <a href="{{route('register')}}">
+        <button class="p-2 px-2 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded">Register</button>
+    </a>
+</div>
 <x-guest-layout>
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
