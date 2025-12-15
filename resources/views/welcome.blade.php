@@ -28,7 +28,7 @@
           t
         </div>
         <span class="text-green-800 font-semibold">
-          e-Chat
+          talk
         </span>
       </div>
 
@@ -39,8 +39,8 @@
 
       <!-- Footer -->
       <p class="text-xs text-green-700">
-        © 2019 Universitas Kristen Maranatha<br>
-        Powered by NOC
+        © 2025 Anjali Corporation<br>
+        Powered by Deshar
       </p>
     </div>
 
@@ -76,7 +76,7 @@
 
         <!-- Forgot Password -->
         <div class="text-right mb-6">
-          <a href="#" class="text-sm text-green-300 hover:text-white transition">
+          <a href="{{Route('password.request')}}" class="text-sm text-green-300 hover:text-white transition">
             Forgot Password?
           </a>
         </div>
@@ -87,7 +87,7 @@
                  hover:bg-teal-300 hover:shadow-lg hover:scale-[1.02]
                  active:scale-95 transition duration-300"
         >
-          Login to WiFi
+          Login
         </button>
 
         <!-- Register -->
@@ -106,7 +106,7 @@
         <!-- Help -->
         <p class="text-center text-xs text-green-300 mt-2">
           Have a problem? Contact us at
-          <a href="#" class="hover:underline">NOC@maranatha.edu</a>
+          <a href="#" class="hover:underline">anjalideshar748@gmail.com</a>
         </p>
 
       </div>
