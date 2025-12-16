@@ -99,9 +99,9 @@
           </a>
         </p>
 
-        <!-- Terms and services -->
+        <!-- Terms and Conditions -->
         <p class="text-center text-xs text-green-300 mt-8">
-          <a href="#" class="hover:underline">Terms and Services</a>
+          <a href="#" class="hover:underline">Terms and Conditions</a>
         </p>
 
         <!-- Help section-->
