@@ -104,7 +104,7 @@
           <a href="#" class="hover:underline">Terms and Conditions</a>
         </p>
 
-        <!-- Help section-->
+        <!-- Help section for problems to be solved-->
         <p class="text-center text-xs text-green-300 mt-2">
           Have a problem? Contact us at
           <a href="#" class="hover:underline">anjalideshar748@gmail.com</a>
