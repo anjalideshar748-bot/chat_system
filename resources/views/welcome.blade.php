@@ -90,7 +90,7 @@
           Login
         </button>
 
-        <!-- Register -->
+        <!-- Register of there is no account-->
         <p class="text-center text-sm mt-6">
           Don’t have an account?
           <a href="{{route('register')}}" class="text-teal-300 hover:text-white font-medium transition">
@@ -98,12 +98,12 @@
           </a>
         </p>
 
-        <!-- Terms -->
+        <!-- Terms and services -->
         <p class="text-center text-xs text-green-300 mt-8">
           <a href="#" class="hover:underline">Terms and Services</a>
         </p>
 
-        <!-- Help -->
+        <!-- Help section-->
         <p class="text-center text-xs text-green-300 mt-2">
           Have a problem? Contact us at
           <a href="#" class="hover:underline">anjalideshar748@gmail.com</a>
