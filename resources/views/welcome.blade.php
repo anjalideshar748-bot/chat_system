@@ -28,6 +28,7 @@
           t
         </div>
         <span class="text-green-800 font-semibold">
+            {{-- chat system title --}}
           talk
         </span>
       </div>
