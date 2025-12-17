@@ -48,15 +48,16 @@
     <!-- Right Section (Login Form) -->
     <div class="bg-green-800 p-10 flex items-center">
       <div class="w-full max-w-sm mx-auto text-white">
-
+        <form method="POST" action="{{ route('login') }}">
+        @csrf
         <h2 class="text-3xl font-bold mb-8">Login</h2>
 
         <!-- Username -->
         <div class="mb-5">
-          <label class="block mb-2 text-sm">Username</label>
+          <label class="block mb-2 text-sm">Email</label>
           <input
             type="text"
-            placeholder="Enter your username"
+            placeholder="Enter your email address"
             class="w-full px-4 py-3 rounded-full bg-green-700 text-white placeholder-green-300
                    focus:outline-none focus:ring-2 focus:ring-green-300
                    transition duration-300 hover:bg-green-600"
@@ -90,7 +91,7 @@
         >
           Login
         </button>
-
+        </form>
         <!-- Register of there is no account-->
         <p class="text-center text-sm mt-6">
           Don’t have an account?
