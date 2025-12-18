@@ -56,7 +56,7 @@
         <div class="mb-5">
           <label class="block mb-2 text-sm">Email</label>
           <input
-            type="text"
+            type="text" name="email"
             placeholder="Enter your email address"
             class="w-full px-4 py-3 rounded-full bg-green-700 text-white placeholder-green-300
                    focus:outline-none focus:ring-2 focus:ring-green-300
@@ -68,7 +68,7 @@
         <div class="mb-3">
           <label class="block mb-2 text-sm">Password</label>
           <input
-            type="password"
+            type="password" name="password"
             placeholder="Enter your password"
             class="w-full px-4 py-3 rounded-full bg-green-700 text-white placeholder-green-300
                    focus:outline-none focus:ring-2 focus:ring-green-300
