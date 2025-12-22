@@ -24,7 +24,7 @@
 
       <!-- Logo -->
       <div class="flex items-center justify-between mb-4">
-        <h1 class="font-bold text-lg">Chat TECH</h1>
+        <h1 class="font-bold text-lg">talk</h1>
         <button class="w-8 h-8 bg-green-600 rounded-full hover:bg-green-500 transition">+</button>
       </div>
 
