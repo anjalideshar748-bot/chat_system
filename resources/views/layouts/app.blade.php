@@ -16,7 +16,9 @@
 
 <!-- Header -->
 <header class="bg-white shadow px-6 py-4 flex justify-between items-center">
-  <h1 class="text-xl font-bold">talk</h1>
+  <h1 class="text-xl font-bold">
+    <img src="C:\Users\Anjali\Downloads\7c03777d88ee2dffef97e812961c7b3d-removebg-preview.png" alt="Logo" class="w-2 h-2 inline-block mr-2 rounded-full">
+  </h1>
   <p class="text-sm text-purple-600 font-medium">Captured memories</p>
 </header>
 
