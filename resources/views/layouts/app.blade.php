@@ -17,7 +17,7 @@
 <!-- Header -->
 <header class="bg-white shadow px-6 py-4 flex justify-between items-center">
   <h1 class="text-xl font-bold">talk</h1>
-  <p class="text-sm text-purple-600 font-medium">Create memorable talks</p>
+  <p class="text-sm text-purple-600 font-medium">Captured memories</p>
 </header>
 
 <!-- Main Layout -->
