@@ -1,30 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Chat UI</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat TECH UI</title>
 
-  <!-- Tailwind CSS -->
+  <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
-    body {
-      font-family: Inter, sans-serif;
-    }
+    body { font-family: Inter, sans-serif; }
   </style>
 </head>
 <body class="bg-green-900 min-h-screen flex items-center justify-center">
 
-<!-- App Container -->
+<!-- Main Container -->
 <div class="w-full max-w-7xl h-[90vh] bg-white rounded-xl overflow-hidden shadow-2xl grid grid-cols-12">
 
   <!-- Sidebar -->
   <aside class="col-span-3 bg-green-800 text-white p-4 flex flex-col">
 
-    <!-- Logo -->
+    <!-- Header -->
     <div class="flex items-center justify-between mb-4">
-      <h1 class="font-bold text-lg">Chat TECH</h1>
+      <h1 class="font-bold text-lg tracking-wide">Chat TECH</h1>
       <button class="w-8 h-8 bg-green-600 rounded-full hover:bg-green-500 transition">+</button>
     </div>
 
@@ -41,7 +39,7 @@
 
     <div class="space-y-2 overflow-y-auto">
 
-      <!-- User Item -->
+      <!-- User -->
       <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-green-700 cursor-pointer transition">
         <img src="https://i.pravatar.cc/40?img=1" class="rounded-full">
         <div>
@@ -58,11 +56,38 @@
         </div>
       </div>
 
-      <div class="flex items-center gap-3 p-2 rounded-lg bg-green-700 cursor-pointer">
+      <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-green-700 cursor-pointer transition">
         <img src="https://i.pravatar.cc/40?img=3" class="rounded-full">
+        <div>
+          <p class="font-medium">Patrick Gordon</p>
+          <p class="text-xs text-green-300">Lorem ipsum is simply...</p>
+        </div>
+      </div>
+
+      <!-- Active Group -->
+      <div class="flex items-center gap-3 p-2 rounded-lg bg-green-700 cursor-pointer">
+        <img src="https://i.pravatar.cc/40?img=4" class="rounded-full">
         <div>
           <p class="font-medium">Jerry Lawson</p>
           <span class="text-xs bg-green-500 px-2 rounded">GROUP</span>
+        </div>
+      </div>
+
+      <p class="text-sm text-green-300 mt-4">Recent Active Profile</p>
+
+      <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-green-700 cursor-pointer transition">
+        <img src="https://i.pravatar.cc/40?img=5" class="rounded-full">
+        <div>
+          <p class="font-medium">Jordan Day</p>
+          <p class="text-xs text-green-300">Lorem ipsum is simply...</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-green-700 cursor-pointer transition">
+        <img src="https://i.pravatar.cc/40?img=6" class="rounded-full">
+        <div>
+          <p class="font-medium">Hannah Banks</p>
+          <p class="text-xs text-green-300">Lorem ipsum is simply...</p>
         </div>
       </div>
 
@@ -72,16 +97,16 @@
   <!-- Chat Area -->
   <section class="col-span-9 flex flex-col bg-gray-50">
 
-    <!-- Header -->
-    <div class="flex justify-between items-center px-6 py-4 border-b bg-white">
+    <!-- Chat Header -->
+    <div class="flex justify-between items-center px-6 py-4 bg-white border-b">
       <div class="flex items-center gap-3">
-        <img src="https://i.pravatar.cc/40?img=5" class="rounded-full">
+        <img src="https://i.pravatar.cc/40?img=7" class="rounded-full">
         <p class="font-semibold">Rachel Hoffman</p>
       </div>
       <div class="flex gap-4 text-gray-500">
-        <span class="hover:text-green-600 cursor-pointer">📞</span>
-        <span class="hover:text-green-600 cursor-pointer">🎥</span>
-        <span class="hover:text-green-600 cursor-pointer">⋮</span>
+        <span class="cursor-pointer hover:text-green-600 transition">📞</span>
+        <span class="cursor-pointer hover:text-green-600 transition">🎥</span>
+        <span class="cursor-pointer hover:text-green-600 transition">⋮</span>
       </div>
     </div>
 
@@ -89,10 +114,10 @@
     <div class="flex-1 p-6 space-y-6 overflow-y-auto">
 
       <!-- Left -->
-      <div class="flex items-start gap-3">
-        <img src="https://i.pravatar.cc/36?img=6" class="rounded-full">
+      <div class="flex gap-3 items-start">
+        <img src="https://i.pravatar.cc/36?img=8" class="rounded-full">
         <div>
-          <div class="bg-white p-4 rounded-xl shadow hover:shadow-md transition">
+          <div class="bg-gray-100 px-4 py-3 rounded-xl hover:shadow transition">
             What is Lorem Ipsum dummy text?
           </div>
           <p class="text-xs text-gray-400 mt-1">4:30 am</p>
@@ -102,19 +127,19 @@
       <!-- Right -->
       <div class="flex justify-end gap-3">
         <div class="text-right">
-          <div class="bg-green-100 p-4 rounded-xl shadow hover:shadow-md transition max-w-md">
+          <div class="bg-white px-4 py-3 rounded-xl shadow hover:shadow-md transition max-w-md">
             Lorem Ipsum is simply dummy text of the printing and typesetting industry.
           </div>
           <p class="text-xs text-gray-400 mt-1">4:35 am</p>
         </div>
-        <img src="https://i.pravatar.cc/36?img=5" class="rounded-full">
+        <img src="https://i.pravatar.cc/36?img=7" class="rounded-full">
       </div>
 
       <!-- Left -->
-      <div class="flex items-start gap-3">
-        <img src="https://i.pravatar.cc/36?img=6" class="rounded-full">
+      <div class="flex gap-3 items-start">
+        <img src="https://i.pravatar.cc/36?img=8" class="rounded-full">
         <div>
-          <div class="bg-white p-4 rounded-xl shadow hover:shadow-md transition">
+          <div class="bg-gray-100 px-4 py-3 rounded-xl hover:shadow transition">
             Where does it come from?
           </div>
           <p class="text-xs text-gray-400 mt-1">4:40 am</p>
@@ -123,14 +148,14 @@
 
       <!-- Typing -->
       <div class="flex justify-end items-center gap-3">
-        <span class="text-sm text-gray-400 italic">typing...</span>
-        <img src="https://i.pravatar.cc/36?img=5" class="rounded-full">
+        <span class="text-sm italic text-gray-400">typing...</span>
+        <img src="https://i.pravatar.cc/36?img=7" class="rounded-full">
       </div>
 
     </div>
 
     <!-- Input -->
-    <div class="p-4 bg-white border-t flex items-center gap-3">
+    <div class="bg-white p-4 border-t flex items-center gap-3">
       <input
         type="text"
         placeholder="Type a message..."
