@@ -109,7 +109,7 @@
 
       <div class="flex">
         <div class="bg-teal-100 px-4 py-2 rounded-2xl max-w-md">
-          Hey! what’s the update?
+          Hey! what’s up?
         </div>
       </div>
 
