@@ -39,7 +39,7 @@
       <img src="https://i.pravatar.cc/45?img=11" class="rounded-full">
       <div class="flex-1">
         <p class="font-medium">Leslie</p>
-        <p class="text-sm text-gray-500 truncate">Available tomorrow...</p>
+        <p class="text-sm text-gray-500 truncate">hello...</p>
       </div>
       <span class="text-xs text-gray-400">3:00 PM</span>
     </div>
