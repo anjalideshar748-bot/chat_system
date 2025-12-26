@@ -48,7 +48,7 @@
       <img src="https://i.pravatar.cc/45?img=12" class="rounded-full">
       <div class="flex-1">
         <p class="font-medium">Jane</p>
-        <p class="text-sm text-gray-500 truncate">Hello, are you home?</p>
+        <p class="text-sm text-gray-500 truncate">are you home?</p>
       </div>
       <span class="text-xs text-gray-400">5m</span>
     </div>
