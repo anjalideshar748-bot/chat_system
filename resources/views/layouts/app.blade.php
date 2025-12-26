@@ -41,7 +41,7 @@
         <p class="font-medium">Leslie</p>
         <p class="text-sm text-gray-500 truncate">hello...</p>
       </div>
-      <span class="text-xs text-gray-400">3:00 PM</span>
+      <span class="text-xs text-gray-400">4:00 PM</span>
     </div>
 
     <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 cursor-pointer transition">
