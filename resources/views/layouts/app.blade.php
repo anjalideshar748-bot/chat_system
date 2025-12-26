@@ -127,7 +127,7 @@
 
       <div class="flex justify-end">
         <div class="bg-teal-500 text-white px-4 py-2 rounded-2xl max-w-md">
-          I think it’s not today.
+          it’s not today.
         </div>
       </div>
 
