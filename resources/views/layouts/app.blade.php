@@ -38,7 +38,7 @@
     <div class="flex items-center gap-3 p-3 rounded-xl bg-gray-100 cursor-pointer">
       <img src="https://i.pravatar.cc/45?img=11" class="rounded-full">
       <div class="flex-1">
-        <p class="font-medium">Leslie</p>
+        <p class="font-medium">Anjali</p>
         <p class="text-sm text-gray-500 truncate">hello...</p>
       </div>
       <span class="text-xs text-gray-400">4:00 PM</span>
