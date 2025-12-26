@@ -115,7 +115,7 @@
 
       <div class="flex justify-end">
         <div class="bg-teal-500 text-white px-4 py-2 rounded-2xl max-w-md">
-          Yeah, will be up in a minute.
+          Yeah.
         </div>
       </div>
 
