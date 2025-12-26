@@ -67,7 +67,7 @@
       <div class="flex items-center gap-3">
         <img src="https://i.pravatar.cc/45?img=11" class="rounded-full">
         <div>
-          <p class="font-semibold">Leslie</p>
+          <p class="font-semibold">Anjali</p>
           <p class="text-xs text-green-500">Online</p>
         </div>
       </div>
