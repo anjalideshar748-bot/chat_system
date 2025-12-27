@@ -273,10 +273,40 @@ const chatBox = document.getElementById("chatBox");
 const chatName = document.getElementById("chatName");
 const chatItems = document.querySelectorAll(".chat-item");
 
-// Send message
+let currentChat = "anjali";
+
+// ---------- LOAD MESSAGES ----------
+function loadMessages(chatId) {
+  chatBox.innerHTML = `<p class="text-center text-xs text-gray-400">Today</p>`;
+  const messages = JSON.parse(localStorage.getItem(chatId)) || [];
+
+  messages.forEach(text => {
+    const msg = document.createElement("div");
+    msg.className = "flex justify-end";
+    msg.innerHTML = `
+      <div class="bg-teal-500 text-white px-4 py-2 rounded-2xl max-w-md">
+        ${text}
+      </div>
+    `;
+    chatBox.appendChild(msg);
+  });
+
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+// ---------- SAVE MESSAGE ----------
+function saveMessage(chatId, text) {
+  const messages = JSON.parse(localStorage.getItem(chatId)) || [];
+  messages.push(text);
+  localStorage.setItem(chatId, JSON.stringify(messages));
+}
+
+// ---------- SEND MESSAGE ----------
 function sendMessage() {
   const text = input.value.trim();
   if (!text) return;
+
+  saveMessage(currentChat, text);
 
   const msg = document.createElement("div");
   msg.className = "flex justify-end";
@@ -296,20 +326,23 @@ input.addEventListener("keypress", e => {
   if (e.key === "Enter") sendMessage();
 });
 
-// Switch chats
+// ---------- SWITCH CHAT ----------
 chatItems.forEach(item => {
   item.addEventListener("click", () => {
     chatItems.forEach(i => i.classList.remove("bg-gray-200"));
     item.classList.add("bg-gray-200");
+
+    currentChat = item.dataset.chat;
     chatName.textContent = item.querySelector("p").textContent;
-    chatBox.innerHTML = `<p class="text-center text-xs text-gray-400">Today</p>`;
+
+    loadMessages(currentChat);
   });
 });
 
-// Call buttons
-document.getElementById("audioCall").onclick = () => alert("📞 Audio call started");
-document.getElementById("videoCall").onclick = () => alert("🎥 Video call started");
+// ---------- INITIAL LOAD ----------
+loadMessages(currentChat);
 </script>
+
 
 </body>
 </html>
