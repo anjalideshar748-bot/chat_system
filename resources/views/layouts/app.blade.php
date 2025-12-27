@@ -174,7 +174,9 @@
 
     <!-- Logo -->
     <div class="p-5 flex items-center gap-3 bg-gradient-to-r from-teal-500 to-green-500 text-white">
-      <img src="C:\Users\Anjali\Downloads\7c03777d88ee2dffef97e812961c7b3d-removebg-preview.png" class="w-10 h-10 rounded-full">
+      <img src="7c03777d88ee2dffef97e812961c7b3d-removebg-preview.png"
+     class="w-10 h-10 rounded-full object-contain">
+
       <h1 class="text-xl font-bold">Talk</h1>
     </div>
 
