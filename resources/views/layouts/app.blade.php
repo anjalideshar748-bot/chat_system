@@ -203,7 +203,8 @@
 
       <div class="chat-item flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 cursor-pointer">
         <img src="https://i.pravatar.cc/45?img=12" class="rounded-full">
-        <div class="flex-1">
+       <div class="chat-item flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 cursor-pointer" data-chat="jane">
+
           <p class="font-medium">Jane</p>
           <p class="text-sm text-gray-500 truncate">are you home?</p>
         </div>
