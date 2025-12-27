@@ -194,7 +194,8 @@
 
       <div class="chat-item flex items-center gap-3 p-3 rounded-xl bg-gray-200 cursor-pointer">
         <img src="https://i.pravatar.cc/45?img=11" class="rounded-full">
-        <div class="flex-1">
+        <div class="chat-item flex items-center gap-3 p-3 rounded-xl bg-gray-200 cursor-pointer" data-chat="anjali">
+
           <p class="font-medium">Anjali</p>
           <p class="text-sm text-gray-500 truncate">hello...</p>
         </div>
