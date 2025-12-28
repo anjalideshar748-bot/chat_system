@@ -188,7 +188,8 @@
     <!-- Chat List -->
     <div class="flex-1 overflow-y-auto p-3 space-y-2">
       <div class="chat-item flex items-center gap-3 p-3 rounded-xl bg-gray-200 cursor-pointer" data-chat="anjali">
-        <img src="https://i.pravatar.cc/45?img=11" class="rounded-full">
+        <img src="/mnt/data/7f7947b4-a8a3-41bd-96b3-f67be77c8651.jpg" class="rounded-full">
+
         <div>
           <p class="font-medium">Anjali</p>
           <p class="text-sm text-gray-500 truncate">hello...</p>
@@ -218,7 +219,7 @@
         </div>
       </div>
 
-      
+
     </div>
 
     <!-- Messages -->
