@@ -211,7 +211,7 @@
     <!-- Header -->
     <div class="p-4 bg-white border-b flex justify-between items-center">
       <div class="flex items-center gap-3">
-        <img src="C:\photo\all\20201211_161655.jpg" class="rounded-full" id="chatAvatar">
+        <img src="https://i.pravatar.cc/45?img=11" class="rounded-full" id="chatAvatar">
         <div>
           <p id="chatName" class="font-semibold">Anjali</p>
           <p class="text-xs text-green-500">Online</p>
