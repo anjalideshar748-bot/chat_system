@@ -161,7 +161,6 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Talk Chat App</title>
-
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -174,10 +173,7 @@
 
     <!-- Logo -->
     <div class="p-5 flex items-center gap-3 bg-gradient-to-r from-teal-500 to-green-500 text-white">
-    <img src="7c03777d88ee2dffef97e812961c7b3d-removebg-preview.png"
-     class="w-12 h-12 object-contain">
-
-
+      <img src="7c03777d88ee2dffef97e812961c7b3d-removebg-preview.png" class="w-12 h-12 object-contain">
       <h1 class="text-xl font-bold">Talk</h1>
     </div>
 
@@ -191,25 +187,21 @@
 
     <!-- Chat List -->
     <div class="flex-1 overflow-y-auto p-3 space-y-2">
-
-      <div class="chat-item flex items-center gap-3 p-3 rounded-xl bg-gray-200 cursor-pointer">
+      <div class="chat-item flex items-center gap-3 p-3 rounded-xl bg-gray-200 cursor-pointer" data-chat="anjali">
         <img src="https://i.pravatar.cc/45?img=11" class="rounded-full">
-        <div class="chat-item flex items-center gap-3 p-3 rounded-xl bg-gray-200 cursor-pointer" data-chat="anjali">
-
+        <div>
           <p class="font-medium">Anjali</p>
           <p class="text-sm text-gray-500 truncate">hello...</p>
         </div>
       </div>
 
-      <div class="chat-item flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 cursor-pointer">
+      <div class="chat-item flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 cursor-pointer" data-chat="samip">
         <img src="https://i.pravatar.cc/45?img=12" class="rounded-full">
-       <div class="chat-item flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 cursor-pointer" data-chat="jane">
-
+        <div>
           <p class="font-medium">Samip</p>
           <p class="text-sm text-gray-500 truncate">are you home?</p>
         </div>
       </div>
-
     </div>
   </aside>
 
@@ -218,9 +210,8 @@
 
     <!-- Header -->
     <div class="p-4 bg-white border-b flex justify-between items-center">
-
       <div class="flex items-center gap-3">
-        <img src="https://i.pravatar.cc/45?img=11" class="rounded-full">
+        <img src="https://i.pravatar.cc/45?img=11" class="rounded-full" id="chatAvatar">
         <div>
           <p id="chatName" class="font-semibold">Anjali</p>
           <p class="text-xs text-green-500">Online</p>
@@ -231,20 +222,11 @@
         <button id="audioCall" class="p-3 rounded-full bg-gray-100 hover:bg-teal-500 hover:text-white">📞</button>
         <button id="videoCall" class="p-3 rounded-full bg-gray-100 hover:bg-teal-500 hover:text-white">🎥</button>
       </div>
-
     </div>
 
     <!-- Messages -->
     <div id="chatBox" class="flex-1 overflow-y-auto p-6 space-y-4">
-
       <p class="text-center text-xs text-gray-400">Today</p>
-
-      <div class="flex">
-        <div class="bg-teal-100 px-4 py-2 rounded-2xl max-w-md">
-          Hey! what’s up?
-        </div>
-      </div>
-
     </div>
 
     <!-- Input -->
@@ -254,7 +236,6 @@
         type="text"
         placeholder="Type a message..."
         class="flex-1 px-4 py-2 rounded-full bg-gray-100 focus:ring-2 focus:ring-teal-400 outline-none">
-
       <button
         id="sendBtn"
         class="px-5 py-2 bg-teal-500 text-white rounded-full hover:bg-teal-400 active:scale-95">
@@ -265,68 +246,76 @@
   </main>
 </div>
 
-<!-- JAVASCRIPT -->
 <script>
 const sendBtn = document.getElementById("sendBtn");
 const input = document.getElementById("messageInput");
 const chatBox = document.getElementById("chatBox");
 const chatName = document.getElementById("chatName");
+const chatAvatar = document.getElementById("chatAvatar");
 const chatItems = document.querySelectorAll(".chat-item");
 
 let currentChat = "anjali";
 
-// ---------- LOAD MESSAGES ----------
+// Helper: escape HTML
+function escapeHTML(str) {
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// Load messages from localStorage
 function loadMessages(chatId) {
   chatBox.innerHTML = `<p class="text-center text-xs text-gray-400">Today</p>`;
   const messages = JSON.parse(localStorage.getItem(chatId)) || [];
 
-  messages.forEach(text => {
+  messages.forEach(msgObj => {
     const msg = document.createElement("div");
-    msg.className = "flex justify-end";
+    msg.className = msgObj.sender === "me" ? "flex justify-end" : "flex justify-start";
     msg.innerHTML = `
-      <div class="bg-teal-500 text-white px-4 py-2 rounded-2xl max-w-md">
-        ${text}
+      <div class="${msgObj.sender === 'me' ? 'bg-teal-500 text-white' : 'bg-gray-200 text-gray-800'} px-4 py-2 rounded-2xl max-w-md">
+        ${escapeHTML(msgObj.text)}
       </div>
     `;
     chatBox.appendChild(msg);
   });
 
-  chatBox.scrollTop = chatBox.scrollHeight;
+  chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: "smooth" });
 }
 
-// ---------- SAVE MESSAGE ----------
-function saveMessage(chatId, text) {
+// Save message to localStorage
+function saveMessage(chatId, text, sender="me") {
   const messages = JSON.parse(localStorage.getItem(chatId)) || [];
-  messages.push(text);
+  messages.push({ text, sender });
   localStorage.setItem(chatId, JSON.stringify(messages));
 }
 
-// ---------- SEND MESSAGE ----------
+// Send message
 function sendMessage() {
   const text = input.value.trim();
   if (!text) return;
 
-  saveMessage(currentChat, text);
+  saveMessage(currentChat, text, "me");
 
   const msg = document.createElement("div");
   msg.className = "flex justify-end";
   msg.innerHTML = `
     <div class="bg-teal-500 text-white px-4 py-2 rounded-2xl max-w-md">
-      ${text}
+      ${escapeHTML(text)}
     </div>
   `;
 
   chatBox.appendChild(msg);
   input.value = "";
-  chatBox.scrollTop = chatBox.scrollHeight;
+  chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: "smooth" });
 }
 
+// Event listeners
 sendBtn.onclick = sendMessage;
 input.addEventListener("keypress", e => {
   if (e.key === "Enter") sendMessage();
 });
 
-// ---------- SWITCH CHAT ----------
+// Switch chat
 chatItems.forEach(item => {
   item.addEventListener("click", () => {
     chatItems.forEach(i => i.classList.remove("bg-gray-200"));
@@ -334,15 +323,15 @@ chatItems.forEach(item => {
 
     currentChat = item.dataset.chat;
     chatName.textContent = item.querySelector("p").textContent;
+    chatAvatar.src = item.querySelector("img").src;
 
     loadMessages(currentChat);
   });
 });
 
-// ---------- INITIAL LOAD ----------
+// Initial load
 loadMessages(currentChat);
 </script>
-
 
 </body>
 </html>
