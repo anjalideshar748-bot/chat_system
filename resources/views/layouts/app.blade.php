@@ -218,10 +218,7 @@
         </div>
       </div>
 
-      <div class="flex gap-3">
-        <button id="audioCall" class="p-3 rounded-full bg-gray-100 hover:bg-teal-500 hover:text-white">📞</button>
-        <button id="videoCall" class="p-3 rounded-full bg-gray-100 hover:bg-teal-500 hover:text-white">🎥</button>
-      </div>
+      
     </div>
 
     <!-- Messages -->
