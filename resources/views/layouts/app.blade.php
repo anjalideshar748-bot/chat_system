@@ -179,29 +179,31 @@
 
     <!-- Search -->
     <div class="p-4">
-      <input
-        type="text"
-        placeholder="Search"
+      <input type="text" placeholder="Search"
         class="w-full px-4 py-2 rounded-full bg-gray-100 focus:ring-2 focus:ring-teal-400 outline-none">
     </div>
 
     <!-- Chat List -->
     <div class="flex-1 overflow-y-auto p-3 space-y-2">
-      <div class="chat-item flex items-center gap-3 p-3 rounded-xl bg-gray-200 cursor-pointer" data-chat="anjali">
+
+      <div class="chat-item flex items-center gap-3 p-3 rounded-xl bg-gray-200 cursor-pointer"
+        data-chat="anjali">
         <img src="https://i.pravatar.cc/45?img=11" class="rounded-full">
         <div>
           <p class="font-medium">Anjali</p>
-          <p class="text-sm text-gray-500 truncate">hello...</p>
+          <p class="text-sm text-gray-500 truncate preview">hello...</p>
         </div>
       </div>
 
-      <div class="chat-item flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 cursor-pointer" data-chat="samip">
+      <div class="chat-item flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 cursor-pointer"
+        data-chat="samip">
         <img src="https://i.pravatar.cc/45?img=12" class="rounded-full">
         <div>
           <p class="font-medium">Samip</p>
-          <p class="text-sm text-gray-500 truncate">are you home?</p>
+          <p class="text-sm text-gray-500 truncate preview">are you home?</p>
         </div>
       </div>
+
     </div>
   </aside>
 
@@ -209,16 +211,12 @@
   <main class="flex-1 flex flex-col bg-gray-50">
 
     <!-- Header -->
-    <div class="p-4 bg-white border-b flex justify-between items-center">
-      <div class="flex items-center gap-3">
-        <img src="https://i.pravatar.cc/45?img=11" class="rounded-full" id="chatAvatar">
-        <div>
-          <p id="chatName" class="font-semibold">Anjali</p>
-          <p class="text-xs text-green-500">Online</p>
-        </div>
+    <div class="p-4 bg-white border-b flex items-center gap-3">
+      <img id="chatAvatar" class="rounded-full">
+      <div>
+        <p id="chatName" class="font-semibold"></p>
+        <p class="text-xs text-green-500">Online</p>
       </div>
-
-
     </div>
 
     <!-- Messages -->
@@ -228,13 +226,11 @@
 
     <!-- Input -->
     <div class="p-4 bg-white border-t flex items-center gap-3">
-      <input
-        id="messageInput"
-        type="text"
+      <textarea id="messageInput" rows="1"
         placeholder="Type a message..."
-        class="flex-1 px-4 py-2 rounded-full bg-gray-100 focus:ring-2 focus:ring-teal-400 outline-none">
-      <button
-        id="sendBtn"
+        class="flex-1 resize-none px-4 py-2 rounded-full bg-gray-100 focus:ring-2 focus:ring-teal-400 outline-none"></textarea>
+
+      <button id="sendBtn"
         class="px-5 py-2 bg-teal-500 text-white rounded-full hover:bg-teal-400 active:scale-95">
         Send
       </button>
@@ -253,37 +249,48 @@ const chatItems = document.querySelectorAll(".chat-item");
 
 let currentChat = "anjali";
 
-// Helper: escape HTML
-function escapeHTML(str) {
-  const div = document.createElement("div");
-  div.textContent = str;
-  return div.innerHTML;
-}
+// Escape HTML
+const escapeHTML = str => {
+  const d = document.createElement("div");
+  d.textContent = str;
+  return d.innerHTML;
+};
 
-// Load messages from localStorage
+// Load messages
 function loadMessages(chatId) {
   chatBox.innerHTML = `<p class="text-center text-xs text-gray-400">Today</p>`;
   const messages = JSON.parse(localStorage.getItem(chatId)) || [];
 
-  messages.forEach(msgObj => {
-    const msg = document.createElement("div");
-    msg.className = msgObj.sender === "me" ? "flex justify-end" : "flex justify-start";
-    msg.innerHTML = `
-      <div class="${msgObj.sender === 'me' ? 'bg-teal-500 text-white' : 'bg-gray-200 text-gray-800'} px-4 py-2 rounded-2xl max-w-md">
-        ${escapeHTML(msgObj.text)}
-      </div>
-    `;
-    chatBox.appendChild(msg);
+  messages.forEach(m => {
+    const div = document.createElement("div");
+    div.className = m.sender === "me" ? "flex justify-end" : "flex justify-start";
+    div.innerHTML = `
+      <div class="${m.sender === 'me' ? 'bg-teal-500 text-white' : 'bg-gray-200 text-gray-800'}
+        px-4 py-2 rounded-2xl max-w-md">
+        <p>${escapeHTML(m.text)}</p>
+        <p class="text-[10px] opacity-70 text-right mt-1">${m.time}</p>
+      </div>`;
+    chatBox.appendChild(div);
   });
 
-  chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: "smooth" });
+  chatBox.scrollTop = chatBox.scrollHeight;
+  input.value = localStorage.getItem(chatId + "_draft") || "";
 }
 
-// Save message to localStorage
-function saveMessage(chatId, text, sender="me") {
-  const messages = JSON.parse(localStorage.getItem(chatId)) || [];
-  messages.push({ text, sender });
-  localStorage.setItem(chatId, JSON.stringify(messages));
+// Save message
+function saveMessage(chatId, text) {
+  const msgs = JSON.parse(localStorage.getItem(chatId)) || [];
+  msgs.push({
+    text,
+    sender: "me",
+    time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+  });
+  localStorage.setItem(chatId, JSON.stringify(msgs));
+}
+
+// Update sidebar preview
+function updatePreview(chatId, text) {
+  document.querySelector(`[data-chat="${chatId}"] .preview`).textContent = text;
 }
 
 // Send message
@@ -291,43 +298,45 @@ function sendMessage() {
   const text = input.value.trim();
   if (!text) return;
 
-  saveMessage(currentChat, text, "me");
+  saveMessage(currentChat, text);
+  updatePreview(currentChat, text);
 
-  const msg = document.createElement("div");
-  msg.className = "flex justify-end";
-  msg.innerHTML = `
-    <div class="bg-teal-500 text-white px-4 py-2 rounded-2xl max-w-md">
-      ${escapeHTML(text)}
-    </div>
-  `;
-
-  chatBox.appendChild(msg);
+  localStorage.removeItem(currentChat + "_draft");
   input.value = "";
-  chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: "smooth" });
+  loadMessages(currentChat);
 }
 
-// Event listeners
-sendBtn.onclick = sendMessage;
-input.addEventListener("keypress", e => {
-  if (e.key === "Enter") sendMessage();
+// Auto-save draft while typing
+input.addEventListener("input", () => {
+  localStorage.setItem(currentChat + "_draft", input.value);
 });
+
+// Enter handling
+input.addEventListener("keydown", e => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+sendBtn.onclick = sendMessage;
 
 // Switch chat
 chatItems.forEach(item => {
-  item.addEventListener("click", () => {
+  item.onclick = () => {
     chatItems.forEach(i => i.classList.remove("bg-gray-200"));
     item.classList.add("bg-gray-200");
 
     currentChat = item.dataset.chat;
-    chatName.textContent = item.querySelector("p").textContent;
+    chatName.textContent = item.querySelector(".font-medium").textContent;
     chatAvatar.src = item.querySelector("img").src;
 
     loadMessages(currentChat);
-  });
+  };
 });
 
 // Initial load
-loadMessages(currentChat);
+document.querySelector('[data-chat="anjali"]').click();
 </script>
 
 </body>
