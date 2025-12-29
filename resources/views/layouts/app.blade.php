@@ -238,6 +238,7 @@
 
   </main>
 </div>
+
 <script>
 const sendBtn = document.getElementById("sendBtn");
 const input = document.getElementById("messageInput");
@@ -358,7 +359,115 @@ function cancelReply() {
   document.getElementById("replyPreview")?.remove();
 }
 
-// ------
+// ---------- UNREAD + SEEN ----------
+function addUnread(chatId) {
+  if (chatId === currentChat) return;
+  const item = document.querySelector(`[data-chat="${chatId}"]`);
+  let badge = item.querySelector(".badge");
+
+  if (!badge) {
+    badge = document.createElement("span");
+    badge.className =
+      "badge ml-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full";
+    badge.textContent = "1";
+    item.appendChild(badge);
+  } else {
+    badge.textContent = Number(badge.textContent) + 1;
+  }
+}
+
+function clearUnread(chatId) {
+  document
+    .querySelector(`[data-chat="${chatId}"]`)
+    ?.querySelector(".badge")
+    ?.remove();
+
+  const msgs = JSON.parse(localStorage.getItem(chatId)) || [];
+  msgs.forEach(m => {
+    if (m.sender === "me") m.seen = true;
+  });
+  localStorage.setItem(chatId, JSON.stringify(msgs));
+}
+
+// ---------- SEND ----------
+function sendMessage() {
+  const text = input.value.trim();
+  if (!text) return;
+
+  const msgs = JSON.parse(localStorage.getItem(currentChat)) || [];
+
+  if (editIndex !== null) {
+    msgs[editIndex].text = text;
+    localStorage.setItem(currentChat, JSON.stringify(msgs));
+    editIndex = null;
+  } else {
+    saveMessage(currentChat, {
+      text,
+      sender: "me",
+      seen: false,
+      reply: replyTo,
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+    });
+
+    updatePreview(currentChat, text);
+    setTimeout(() => autoReply(currentChat), 1500);
+  }
+
+  cancelReply();
+  input.value = "";
+  localStorage.removeItem(currentChat + "_draft");
+  loadMessages(currentChat);
+}
+
+// ---------- AUTO REPLY ----------
+function autoReply(chatId) {
+  const replies = ["Okay 👍", "Noted", "Sure 😊", "Got it!", "Alright 👌"];
+  const reply = replies[Math.floor(Math.random() * replies.length)];
+
+  saveMessage(chatId, {
+    text: reply,
+    sender: "them",
+    seen: true,
+    time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+  });
+
+  updatePreview(chatId, reply);
+  addUnread(chatId);
+
+  if (chatId === currentChat) loadMessages(chatId);
+}
+
+// ---------- EVENTS ----------
+input.addEventListener("input", () => {
+  localStorage.setItem(currentChat + "_draft", input.value);
+});
+
+input.addEventListener("keydown", e => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+sendBtn.onclick = sendMessage;
+
+// Switch chat
+chatItems.forEach(item => {
+  item.onclick = () => {
+    chatItems.forEach(i => i.classList.remove("bg-gray-200"));
+    item.classList.add("bg-gray-200");
+
+    currentChat = item.dataset.chat;
+    chatName.textContent = item.querySelector(".font-medium").textContent;
+    chatAvatar.src = item.querySelector("img").src;
+
+    loadMessages(currentChat);
+  };
+});
+
+// Initial open
+document.querySelector('[data-chat="anjali"]').click();
+</script>
 
 
 
