@@ -238,7 +238,6 @@
 
   </main>
 </div>
-
 <script>
 const sendBtn = document.getElementById("sendBtn");
 const input = document.getElementById("messageInput");
@@ -248,6 +247,8 @@ const chatAvatar = document.getElementById("chatAvatar");
 const chatItems = document.querySelectorAll(".chat-item");
 
 let currentChat = "anjali";
+let editIndex = null;
+let replyTo = null;
 
 // Escape HTML
 const escapeHTML = str => {
@@ -263,7 +264,7 @@ function loadMessages(chatId) {
 
   messages.forEach((m, index) => {
     const wrap = document.createElement("div");
-    wrap.className = m.sender === "me" ? "flex justify-end group" : "flex justify-start";
+    wrap.className = m.sender === "me" ? "flex justify-end group" : "flex justify-start group";
 
     wrap.innerHTML = `
       <div class="relative ${m.sender === 'me'
@@ -271,21 +272,27 @@ function loadMessages(chatId) {
         : 'bg-gray-200 text-gray-800'}
         px-4 py-2 rounded-2xl max-w-md">
 
+        ${m.reply
+          ? `<div class="text-xs mb-1 px-2 py-1 rounded bg-black/10">
+               <span class="opacity-70">Reply:</span>
+               ${escapeHTML(m.reply)}
+             </div>`
+          : ""}
+
         <p>${escapeHTML(m.text)}</p>
 
-        <div class="flex justify-end items-center gap-1 mt-1 text-[10px] opacity-80">
+        <div class="flex justify-end items-center gap-2 mt-1 text-[10px] opacity-80">
           <span>${m.time}</span>
-          ${m.sender === "me"
-            ? `<span>${m.seen ? "✔✔" : "✔"}</span>`
-            : ""}
+          ${m.sender === "me" ? `<span>${m.seen ? "✔✔" : "✔"}</span>` : ""}
         </div>
 
-        ${m.sender === "me"
-          ? `<button onclick="deleteMessage('${chatId}', ${index})"
-             class="absolute -right-6 top-2 hidden group-hover:block text-red-500">
-             🗑️
-           </button>`
-          : ""}
+        <div class="absolute -right-7 top-2 hidden group-hover:flex flex-col gap-1">
+          <button onclick="startReply('${chatId}', ${index})">↩️</button>
+          ${m.sender === "me"
+            ? `<button onclick="startEdit('${chatId}', ${index})">✏️</button>
+               <button onclick="deleteMessage('${chatId}', ${index})">🗑️</button>`
+            : ""}
+        </div>
       </div>
     `;
     chatBox.appendChild(wrap);
@@ -297,14 +304,9 @@ function loadMessages(chatId) {
 }
 
 // ---------- SAVE ----------
-function saveMessage(chatId, text, sender = "me", seen = false) {
+function saveMessage(chatId, msg) {
   const msgs = JSON.parse(localStorage.getItem(chatId)) || [];
-  msgs.push({
-    text,
-    sender,
-    seen,
-    time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-  });
+  msgs.push(msg);
   localStorage.setItem(chatId, JSON.stringify(msgs));
 }
 
@@ -320,95 +322,43 @@ function deleteMessage(chatId, index) {
   loadMessages(chatId);
 }
 
-// ---------- UNREAD ----------
-function addUnread(chatId) {
-  if (chatId === currentChat) return;
-  const item = document.querySelector(`[data-chat="${chatId}"]`);
-  let badge = item.querySelector(".badge");
+// ---------- EDIT ----------
+function startEdit(chatId, index) {
+  const msgs = JSON.parse(localStorage.getItem(chatId));
+  editIndex = index;
+  input.value = msgs[index].text;
+  input.focus();
+}
 
-  if (!badge) {
-    badge = document.createElement("span");
-    badge.className =
-      "badge ml-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full";
-    badge.textContent = "1";
-    item.appendChild(badge);
-  } else {
-    badge.textContent = Number(badge.textContent) + 1;
+// ---------- REPLY ----------
+function startReply(chatId, index) {
+  const msgs = JSON.parse(localStorage.getItem(chatId));
+  replyTo = msgs[index].text;
+  showReplyPreview();
+}
+
+function showReplyPreview() {
+  let preview = document.getElementById("replyPreview");
+  if (!preview) {
+    preview = document.createElement("div");
+    preview.id = "replyPreview";
+    preview.className =
+      "px-4 py-2 text-sm bg-gray-200 flex justify-between items-center";
+    preview.innerHTML = `
+      <span id="replyText"></span>
+      <button onclick="cancelReply()">✖</button>
+    `;
+    input.parentElement.prepend(preview);
   }
+  document.getElementById("replyText").textContent = replyTo;
 }
 
-function clearUnread(chatId) {
-  const badge = document
-    .querySelector(`[data-chat="${chatId}"]`)
-    ?.querySelector(".badge");
-  if (badge) badge.remove();
-
-  // mark messages as seen
-  const msgs = JSON.parse(localStorage.getItem(chatId)) || [];
-  msgs.forEach(m => {
-    if (m.sender === "me") m.seen = true;
-  });
-  localStorage.setItem(chatId, JSON.stringify(msgs));
+function cancelReply() {
+  replyTo = null;
+  document.getElementById("replyPreview")?.remove();
 }
 
-// ---------- SEND ----------
-function sendMessage() {
-  const text = input.value.trim();
-  if (!text) return;
-
-  saveMessage(currentChat, text, "me", false);
-  updatePreview(currentChat, text);
-
-  localStorage.removeItem(currentChat + "_draft");
-  input.value = "";
-  loadMessages(currentChat);
-
-  setTimeout(() => autoReply(currentChat), 1500);
-}
-
-// ---------- AUTO REPLY ----------
-function autoReply(chatId) {
-  const replies = ["Okay 👍", "Seen", "Sure 😊", "Got it!", "Alright 👌"];
-  const reply = replies[Math.floor(Math.random() * replies.length)];
-
-  saveMessage(chatId, reply, "them", true);
-  updatePreview(chatId, reply);
-  addUnread(chatId);
-
-  if (chatId === currentChat) loadMessages(chatId);
-}
-
-// ---------- EVENTS ----------
-input.addEventListener("input", () => {
-  localStorage.setItem(currentChat + "_draft", input.value);
-});
-
-input.addEventListener("keydown", e => {
-  if (e.key === "Enter" && !e.shiftKey) {
-    e.preventDefault();
-    sendMessage();
-  }
-});
-
-sendBtn.onclick = sendMessage;
-
-// Switch chat
-chatItems.forEach(item => {
-  item.onclick = () => {
-    chatItems.forEach(i => i.classList.remove("bg-gray-200"));
-    item.classList.add("bg-gray-200");
-
-    currentChat = item.dataset.chat;
-    chatName.textContent = item.querySelector(".font-medium").textContent;
-    chatAvatar.src = item.querySelector("img").src;
-
-    loadMessages(currentChat);
-  };
-});
-
-// Initial open
-document.querySelector('[data-chat="anjali"]').click();
-</script>
+// ------
 
 
 
