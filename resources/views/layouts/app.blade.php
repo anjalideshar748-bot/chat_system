@@ -256,35 +256,53 @@ const escapeHTML = str => {
   return d.innerHTML;
 };
 
-// ---------- MESSAGE FUNCTIONS ----------
+// ---------- LOAD ----------
 function loadMessages(chatId) {
   chatBox.innerHTML = `<p class="text-center text-xs text-gray-400">Today</p>`;
   const messages = JSON.parse(localStorage.getItem(chatId)) || [];
 
-  messages.forEach(m => {
-    const div = document.createElement("div");
-    div.className = m.sender === "me" ? "flex justify-end" : "flex justify-start";
-    div.innerHTML = `
-      <div class="${m.sender === 'me'
+  messages.forEach((m, index) => {
+    const wrap = document.createElement("div");
+    wrap.className = m.sender === "me" ? "flex justify-end group" : "flex justify-start";
+
+    wrap.innerHTML = `
+      <div class="relative ${m.sender === 'me'
         ? 'bg-teal-500 text-white'
-        : 'bg-gray-200 text-gray-800'} px-4 py-2 rounded-2xl max-w-md">
+        : 'bg-gray-200 text-gray-800'}
+        px-4 py-2 rounded-2xl max-w-md">
+
         <p>${escapeHTML(m.text)}</p>
-        <p class="text-[10px] opacity-70 text-right mt-1">${m.time}</p>
-      </div>`;
-    chatBox.appendChild(div);
+
+        <div class="flex justify-end items-center gap-1 mt-1 text-[10px] opacity-80">
+          <span>${m.time}</span>
+          ${m.sender === "me"
+            ? `<span>${m.seen ? "✔✔" : "✔"}</span>`
+            : ""}
+        </div>
+
+        ${m.sender === "me"
+          ? `<button onclick="deleteMessage('${chatId}', ${index})"
+             class="absolute -right-6 top-2 hidden group-hover:block text-red-500">
+             🗑️
+           </button>`
+          : ""}
+      </div>
+    `;
+    chatBox.appendChild(wrap);
   });
 
   chatBox.scrollTop = chatBox.scrollHeight;
   input.value = localStorage.getItem(chatId + "_draft") || "";
-
   clearUnread(chatId);
 }
 
-function saveMessage(chatId, text, sender = "me") {
+// ---------- SAVE ----------
+function saveMessage(chatId, text, sender = "me", seen = false) {
   const msgs = JSON.parse(localStorage.getItem(chatId)) || [];
   msgs.push({
     text,
     sender,
+    seen,
     time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
   });
   localStorage.setItem(chatId, JSON.stringify(msgs));
@@ -294,10 +312,17 @@ function updatePreview(chatId, text) {
   document.querySelector(`[data-chat="${chatId}"] .preview`).textContent = text;
 }
 
-// ---------- UNREAD BADGE ----------
+// ---------- DELETE ----------
+function deleteMessage(chatId, index) {
+  const msgs = JSON.parse(localStorage.getItem(chatId)) || [];
+  msgs.splice(index, 1);
+  localStorage.setItem(chatId, JSON.stringify(msgs));
+  loadMessages(chatId);
+}
+
+// ---------- UNREAD ----------
 function addUnread(chatId) {
   if (chatId === currentChat) return;
-
   const item = document.querySelector(`[data-chat="${chatId}"]`);
   let badge = item.querySelector(".badge");
 
@@ -317,36 +342,36 @@ function clearUnread(chatId) {
     .querySelector(`[data-chat="${chatId}"]`)
     ?.querySelector(".badge");
   if (badge) badge.remove();
+
+  // mark messages as seen
+  const msgs = JSON.parse(localStorage.getItem(chatId)) || [];
+  msgs.forEach(m => {
+    if (m.sender === "me") m.seen = true;
+  });
+  localStorage.setItem(chatId, JSON.stringify(msgs));
 }
 
-// ---------- SEND MESSAGE ----------
+// ---------- SEND ----------
 function sendMessage() {
   const text = input.value.trim();
   if (!text) return;
 
-  saveMessage(currentChat, text, "me");
+  saveMessage(currentChat, text, "me", false);
   updatePreview(currentChat, text);
 
   localStorage.removeItem(currentChat + "_draft");
   input.value = "";
   loadMessages(currentChat);
 
-  // Auto reply
   setTimeout(() => autoReply(currentChat), 1500);
 }
 
 // ---------- AUTO REPLY ----------
 function autoReply(chatId) {
-  const replies = [
-    "Okay 👍",
-    "I will reply later",
-    "Sounds good 😊",
-    "Got it!",
-    "Sure 👌"
-  ];
-
+  const replies = ["Okay 👍", "Seen", "Sure 😊", "Got it!", "Alright 👌"];
   const reply = replies[Math.floor(Math.random() * replies.length)];
-  saveMessage(chatId, reply, "them");
+
+  saveMessage(chatId, reply, "them", true);
   updatePreview(chatId, reply);
   addUnread(chatId);
 
@@ -384,6 +409,7 @@ chatItems.forEach(item => {
 // Initial open
 document.querySelector('[data-chat="anjali"]').click();
 </script>
+
 
 
 </body>
