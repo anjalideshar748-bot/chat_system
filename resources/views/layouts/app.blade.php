@@ -200,7 +200,7 @@
         <img src="https://i.pravatar.cc/45?img=12" class="rounded-full">
         <div>
           <p class="font-medium">Samip</p>
-          <p class="text-sm text-gray-500 truncate preview">are you home?</p>
+          <p class="text-sm text-gray-500 truncate preview"></p>
         </div>
       </div>
 
