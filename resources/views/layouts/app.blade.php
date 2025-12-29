@@ -256,7 +256,7 @@ const escapeHTML = str => {
   return d.innerHTML;
 };
 
-// Load messages
+// ---------- MESSAGE FUNCTIONS ----------
 function loadMessages(chatId) {
   chatBox.innerHTML = `<p class="text-center text-xs text-gray-400">Today</p>`;
   const messages = JSON.parse(localStorage.getItem(chatId)) || [];
@@ -265,8 +265,9 @@ function loadMessages(chatId) {
     const div = document.createElement("div");
     div.className = m.sender === "me" ? "flex justify-end" : "flex justify-start";
     div.innerHTML = `
-      <div class="${m.sender === 'me' ? 'bg-teal-500 text-white' : 'bg-gray-200 text-gray-800'}
-        px-4 py-2 rounded-2xl max-w-md">
+      <div class="${m.sender === 'me'
+        ? 'bg-teal-500 text-white'
+        : 'bg-gray-200 text-gray-800'} px-4 py-2 rounded-2xl max-w-md">
         <p>${escapeHTML(m.text)}</p>
         <p class="text-[10px] opacity-70 text-right mt-1">${m.time}</p>
       </div>`;
@@ -275,43 +276,88 @@ function loadMessages(chatId) {
 
   chatBox.scrollTop = chatBox.scrollHeight;
   input.value = localStorage.getItem(chatId + "_draft") || "";
+
+  clearUnread(chatId);
 }
 
-// Save message
-function saveMessage(chatId, text) {
+function saveMessage(chatId, text, sender = "me") {
   const msgs = JSON.parse(localStorage.getItem(chatId)) || [];
   msgs.push({
     text,
-    sender: "me",
+    sender,
     time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
   });
   localStorage.setItem(chatId, JSON.stringify(msgs));
 }
 
-// Update sidebar preview
 function updatePreview(chatId, text) {
   document.querySelector(`[data-chat="${chatId}"] .preview`).textContent = text;
 }
 
-// Send message
+// ---------- UNREAD BADGE ----------
+function addUnread(chatId) {
+  if (chatId === currentChat) return;
+
+  const item = document.querySelector(`[data-chat="${chatId}"]`);
+  let badge = item.querySelector(".badge");
+
+  if (!badge) {
+    badge = document.createElement("span");
+    badge.className =
+      "badge ml-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full";
+    badge.textContent = "1";
+    item.appendChild(badge);
+  } else {
+    badge.textContent = Number(badge.textContent) + 1;
+  }
+}
+
+function clearUnread(chatId) {
+  const badge = document
+    .querySelector(`[data-chat="${chatId}"]`)
+    ?.querySelector(".badge");
+  if (badge) badge.remove();
+}
+
+// ---------- SEND MESSAGE ----------
 function sendMessage() {
   const text = input.value.trim();
   if (!text) return;
 
-  saveMessage(currentChat, text);
+  saveMessage(currentChat, text, "me");
   updatePreview(currentChat, text);
 
   localStorage.removeItem(currentChat + "_draft");
   input.value = "";
   loadMessages(currentChat);
+
+  // Auto reply
+  setTimeout(() => autoReply(currentChat), 1500);
 }
 
-// Auto-save draft while typing
+// ---------- AUTO REPLY ----------
+function autoReply(chatId) {
+  const replies = [
+    "Okay 👍",
+    "I will reply later",
+    "Sounds good 😊",
+    "Got it!",
+    "Sure 👌"
+  ];
+
+  const reply = replies[Math.floor(Math.random() * replies.length)];
+  saveMessage(chatId, reply, "them");
+  updatePreview(chatId, reply);
+  addUnread(chatId);
+
+  if (chatId === currentChat) loadMessages(chatId);
+}
+
+// ---------- EVENTS ----------
 input.addEventListener("input", () => {
   localStorage.setItem(currentChat + "_draft", input.value);
 });
 
-// Enter handling
 input.addEventListener("keydown", e => {
   if (e.key === "Enter" && !e.shiftKey) {
     e.preventDefault();
@@ -335,9 +381,10 @@ chatItems.forEach(item => {
   };
 });
 
-// Initial load
+// Initial open
 document.querySelector('[data-chat="anjali"]').click();
 </script>
+
 
 </body>
 </html>
