@@ -190,7 +190,7 @@
         data-chat="anjali">
         <img src="https://i.pravatar.cc/45?img=11" class="rounded-full">
         <div>
-          <p class="font-medium">Anjali</p>
+          <p class="font-medium">heili</p>
           <p class="text-sm text-gray-500 truncate preview"></p>
         </div>
       </div>
