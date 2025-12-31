@@ -419,7 +419,7 @@ function sendMessage() {
   loadMessages(currentChat);
 }
 
-// ---------- AUTO REPLY ----------
+// AUTO REPLY
 function autoReply(chatId) {
   const replies = ["Okay 👍", "Noted", "Sure 😊", "Got it!", "Alright 👌"];
   const reply = replies[Math.floor(Math.random() * replies.length)];
