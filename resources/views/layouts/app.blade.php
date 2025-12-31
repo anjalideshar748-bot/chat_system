@@ -323,7 +323,7 @@ function deleteMessage(chatId, index) {
   loadMessages(chatId);
 }
 
-// ---------- EDIT 
+//  EDIT
 function startEdit(chatId, index) {
   const msgs = JSON.parse(localStorage.getItem(chatId));
   editIndex = index;
