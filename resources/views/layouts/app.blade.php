@@ -389,7 +389,7 @@ function clearUnread(chatId) {
   localStorage.setItem(chatId, JSON.stringify(msgs));
 }
 
-// ---------- SEND ----------
+// SEND 
 function sendMessage() {
   const text = input.value.trim();
   if (!text) return;
