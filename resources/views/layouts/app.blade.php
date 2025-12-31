@@ -331,7 +331,7 @@ function startEdit(chatId, index) {
   input.focus();
 }
 
-// ---------- REPLY 
+// REPLY
 function startReply(chatId, index) {
   const msgs = JSON.parse(localStorage.getItem(chatId));
   replyTo = msgs[index].text;
