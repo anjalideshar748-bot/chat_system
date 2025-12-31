@@ -173,7 +173,7 @@
 
     <!-- Logo -->
     <div class="p-5 flex items-center gap-3 bg-gradient-to-r from-teal-500 to-green-500 text-white">
-      <img src="7c03777d88ee2dffef97e812961c7b3d-removebg-preview.png" class="w-12 h-12 object-contain">
+      <img src="https://i.pinimg.com/1200x/7c/03/77/7c03777d88ee2dffef97e812961c7b3d.jpg" class="rounded w-8 h-12 object-contain">
       <h1 class="text-xl font-bold">Talk</h1>
     </div>
 
