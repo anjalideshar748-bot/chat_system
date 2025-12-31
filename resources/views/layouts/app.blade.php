@@ -451,7 +451,7 @@ input.addEventListener("keydown", e => {
 
 sendBtn.onclick = sendMessage;
 
-// Switch chat
+// Switch Chat
 chatItems.forEach(item => {
   item.onclick = () => {
     chatItems.forEach(i => i.classList.remove("bg-gray-200"));
