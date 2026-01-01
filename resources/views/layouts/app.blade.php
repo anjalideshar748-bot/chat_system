@@ -304,7 +304,7 @@ function loadMessages(chatId) {
   clearUnread(chatId);
 }
 
-// ---------- SAVE ----------
+// ---------- SAVE 
 function saveMessage(chatId, msg) {
   const msgs = JSON.parse(localStorage.getItem(chatId)) || [];
   msgs.push(msg);
