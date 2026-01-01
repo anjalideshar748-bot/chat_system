@@ -177,7 +177,7 @@
       <h1 class="text-xl font-bold">Talk</h1>
     </div>
 
-    <!-- Search -->
+    <!-- Search  -->
     <div class="p-4">
       <input type="text" placeholder="Search"
         class="w-full px-4 py-2 rounded-full bg-gray-100 focus:ring-2 focus:ring-teal-400 outline-none">
