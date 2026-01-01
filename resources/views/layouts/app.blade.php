@@ -258,7 +258,7 @@ const escapeHTML = str => {
   return d.innerHTML;
 };
 
-// ---------- LOAD ----------
+// ---------- LOAD 
 function loadMessages(chatId) {
   chatBox.innerHTML = `<p class="text-center text-xs text-gray-400">Today</p>`;
   const messages = JSON.parse(localStorage.getItem(chatId)) || [];
