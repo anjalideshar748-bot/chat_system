@@ -219,7 +219,7 @@
       </div>
     </div>
 
-    <!-- Messages -->
+    <!-- Message -->
     <div id="chatBox" class="flex-1 overflow-y-auto p-6 space-y-4">
       <p class="text-center text-xs text-gray-400">Today</p>
     </div>
