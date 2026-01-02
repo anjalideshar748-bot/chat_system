@@ -183,7 +183,7 @@
         class="w-full px-4 py-2 rounded-full bg-gray-100 focus:ring-2 focus:ring-teal-400 outline-none">
     </div>
 
-    <!-- Chat List -->
+    <!--Chat List -->
     <div class="flex-1 overflow-y-auto p-3 space-y-2">
 
       <div class="chat-item flex items-center gap-3 p-3 rounded-xl bg-gray-200 cursor-pointer"
