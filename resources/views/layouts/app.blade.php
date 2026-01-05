@@ -315,7 +315,7 @@ function updatePreview(chatId, text) {
   document.querySelector(`[data-chat="${chatId}"] .preview`).textContent = text;
 }
 
-// DELETE
+//DELETE
 function deleteMessage(chatId, index) {
   const msgs = JSON.parse(localStorage.getItem(chatId)) || [];
   msgs.splice(index, 1);
