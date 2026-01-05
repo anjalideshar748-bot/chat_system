@@ -359,7 +359,7 @@ function cancelReply() {
   document.getElementById("replyPreview")?.remove();
 }
 
-// UNREAD + SEEN
+//UNREAD + SEEN
 function addUnread(chatId) {
   if (chatId === currentChat) return;
   const item = document.querySelector(`[data-chat="${chatId}"]`);
