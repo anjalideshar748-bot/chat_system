@@ -207,7 +207,7 @@
     </div>
   </aside>
 
-  <!--CHAT  AREA-->
+  <!--CHAT AREA-->
   <main class="flex-1 flex flex-col bg-gray-50">
 
     <!-- Header -->
