@@ -168,7 +168,7 @@
 
 <div class="flex h-full">
 
-  <!-- SIDEBAR -->
+  <!--SIDEBAR -->
   <aside class="w-1/4 bg-white border-r flex flex-col">
 
     <!--Logo-->
