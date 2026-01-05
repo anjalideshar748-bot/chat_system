@@ -210,7 +210,7 @@
   <!--CHAT AREA-->
   <main class="flex-1 flex flex-col bg-gray-50">
 
-    <!--Header -->
+    <!--Header-->
     <div class="p-4 bg-white border-b flex items-center gap-3">
       <img id="chatAvatar" class="rounded-full">
       <div>
