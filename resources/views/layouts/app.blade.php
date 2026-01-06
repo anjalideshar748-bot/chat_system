@@ -437,7 +437,7 @@ function autoReply(chatId) {
   if (chatId === currentChat) loadMessages(chatId);
 }
 
-//  EVENTS
+// EVENTS
 input.addEventListener("input", () => {
   localStorage.setItem(currentChat + "_draft", input.value);
 });
