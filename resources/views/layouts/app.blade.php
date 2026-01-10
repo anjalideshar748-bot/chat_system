@@ -465,7 +465,7 @@ chatItems.forEach(item => {
   };
 });
 
-//Initial Open
+//initial Open
 document.querySelector('[data-chat="anjali"]').click();
 </script>
 
