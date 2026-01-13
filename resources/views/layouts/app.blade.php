@@ -475,4 +475,4 @@ document.querySelector('[data-chat="anjali"]').click();
 </html>
 
 
-{{-- // hello i am anjali deshar. i just like to do whatever i want but i m not allowed and i feel so fucking frust--}}
+{{-- // hello i am anjali deshar. i just like to do whatever i want but i m not allowed and i feel so fucking frus--}}
