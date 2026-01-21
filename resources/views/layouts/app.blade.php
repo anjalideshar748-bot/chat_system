@@ -475,4 +475,4 @@ document.querySelector('[data-chat="anjali"]').click();
 </html>
 
 
-{{-- // helo  amehater wantut i m not allowed and i feelso uckin--}}
+{{-- // helo  amehater wanut i m not allowed and i feelso uckin--}}
