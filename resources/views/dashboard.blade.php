@@ -43,40 +43,28 @@
     </div>
 
     <!-- Search -->
-    <div class="p-4">
+    {{-- <div class="p-4">
       <input
         type="text"
         placeholder="Search"
         class="w-full px-4 py-2 rounded bg-[#3c8c6d] placeholder-white/70
                focus:outline-none focus:ring-2 focus:ring-white"
       />
-    </div>
+    </div> --}}
+    <form method="get" action="{{route('search_user')}}" class="p-4">
+      <input type="text" name="search" placeholder="Search" class="w-full px-4 py-2 rounded bg-[#3c8c6d] placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white"
+      />
+    </form>
 
     <!-- Contacts -->
     <div class="flex-1 overflow-y-auto space-y-1 px-2">
 
       <div class="px-3 py-3 rounded-lg bg-[#3c8c6d] cursor-pointer">
-        <p class="font-semibold">Stephen Ramirez</p>
+        <p class="font-semibold">{{$user->name}}</p>
         <p class="text-sm text-white/70 truncate">Lorem Ipsum is simply...</p>
       </div>
 
-      <div class="px-3 py-3 rounded-lg hover:bg-[#3c8c6d] cursor-pointer transition">
-        <p class="font-semibold">Mildred Peterson</p>
-        <p class="text-sm text-white/70 truncate">Lorem Ipsum is simply...</p>
-      </div>
-
-      <div class="px-3 py-3 rounded-lg hover:bg-[#3c8c6d] cursor-pointer transition">
-        <p class="font-semibold">Patrick Gordon</p>
-        <p class="text-sm text-white/70 truncate">Lorem Ipsum is simply...</p>
-      </div>
-
-      <div class="px-3 py-3 rounded-lg hover:bg-[#3c8c6d] cursor-pointer transition">
-        <p class="font-semibold flex items-center gap-2">
-          Jerry Lawson
-          <span class="text-xs bg-white text-[#2f7f5f] px-2 rounded">GROUP</span>
-        </p>
-        <p class="text-sm text-white/70 truncate">Lorem Ipsum is simply...</p>
-      </div>
+      
 
     </div>
   </aside>

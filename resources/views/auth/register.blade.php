@@ -1,52 +1,117 @@
-<x-welcome>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login Page</title>
 
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-green-900 flex items-center justify-center">
+
+  <!-- Main Container -->
+  <div class="w-full max-w-6xl bg-white rounded-2xl overflow-hidden shadow-2xl grid md:grid-cols-2">
+
+    <!-- Left Section -->
+    <div class="bg-green-50 p-10 flex flex-col justify-between relative">
+
+      <!-- Logo -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-green-700 rounded-full flex text-3xl items-center justify-center text-white font-bold">
+          t
         </div>
+        <span class="text-green-800 font-semibold">
+            {{-- chat system title --}}
+          talk
+        </span>
+      </div>
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+      <!-- Illustration Placeholder -->
+      <div class="flex justify-center items-center my-10">
+        <img src="https://i.pinimg.com/1200x/7c/03/77/7c03777d88ee2dffef97e812961c7b3d.jpg" alt="" class="rounded-full">
+      </div>
+
+      <!-- Footer -->
+      <p class="text-xs text-green-700">
+        © 2025 Anjali Corporation<br>
+        Powered by Deshar
+      </p>
+    </div>
+
+    <!-- Right Section (Login Form) -->
+    <div class="bg-green-800 p-10 flex items-center">
+      <div class="w-full max-w-sm mx-auto text-white">
+        <form method="POST" action="{{ route('register') }}">
+        @csrf
+        <h2 class="text-3xl font-bold mb-8">Register</h2>
+        <!-- Name -->
+        <div class="mb-5">
+          <label class="block mb-2 text-sm">Name</label>
+          <input type="text" name="name" placeholder="Enter your full name" class="w-full px-4 py-3 rounded-full bg-green-700 text-white placeholder-green-300 focus:outline-none focus:ring-2 focus:ring-green-300 transition duration-300 hover:bg-green-600"/>
+        </div>
+        
+        <div class="mb-5">
+          <label class="block mb-2 text-sm">Email</label>
+          <input type="text" name="email" placeholder="Enter your email address" class="w-full px-4 py-3 rounded-full bg-green-700 text-white placeholder-green-300 focus:outline-none focus:ring-2 focus:ring-green-300 transition duration-300 hover:bg-green-600"/>
         </div>
 
         <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        <div class="mb-3">
+          <label class="block mb-2 text-sm">Password</label>
+          <input type="password" name="password" placeholder="Enter your password" class="w-full px-4 py-3 rounded-full bg-green-700 text-white placeholder-green-300 focus:outline-none focus:ring-2 focus:ring-green-300 transition duration-300 hover:bg-green-600"/>
+          <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
         <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
+        <div class="mb-6">
+          <label class="block mb-2 text-sm">Confirm Password</label>
+          
 
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+          <input type="password" name="password_confirmation" placeholder="Confirm your password" class="w-full px-4 py-3 rounded-full bg-green-700 text-white placeholder-green-300 focus:outline-none focus:ring-2 focus:ring-green-300 transition duration-300 hover:bg-green-600"/>
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
+       
 
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-welcome>
+        <!-- Register Button -->
+        <button
+          class="w-full py-3 rounded-full bg-teal-400 text-green-900 font-semibold
+                 hover:bg-teal-300 hover:shadow-lg hover:scale-[1.02]
+                 active:scale-95 transition duration-300"
+        >
+          Register
+        </button>
+        </form>
+        <!-- Already Registered?-->
+        <p class="text-center text-sm mt-6">
+          Already Registered?
+          <a href="/" class="text-teal-300 hover:text-white font-medium transition">
+            login
+          </a>
+        </p>
+
+        <!-- Terms and Conditions -->
+        <p class="text-center text-xs text-green-300 mt-8">
+          <a href="#" class="hover:underline">Terms and Conditions</a>
+        </p>
+
+        <!-- Help section for problems to be solved-->
+        <p class="text-center text-xs text-green-300 mt-2">
+          Have a problem? Contact us at
+          <a href="#" class="hover:underline">anjalideshar748@gmail.com</a>
+        </p>
+
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
