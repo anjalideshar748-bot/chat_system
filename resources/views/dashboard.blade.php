@@ -58,13 +58,16 @@
 
     <!-- Contacts -->
     <div class="flex-1 overflow-y-auto space-y-1 px-2">
+            @foreach ($user as $user)
+      <div class=" flex row-auto gap-4 px-3 py-3 rounded-lg bg-[#3c8c6d] cursor-pointer">
 
-      <div class="px-3 py-3 rounded-lg bg-[#3c8c6d] cursor-pointer">
-        <p class="font-semibold">{{$user->name}}</p>
-        <p class="text-sm text-white/70 truncate">Lorem Ipsum is simply...</p>
+        <img src="https://i.pravatar.cc/40?img=32" class="rounded-full" >
+        <p class="font-semibold">{{ $user->name}}</p>
+
       </div>
+       @endforeach
 
-      
+
 
     </div>
   </aside>
@@ -75,10 +78,7 @@
     <!-- CHAT HEADER -->
     <div class="h-16 bg-white border-b flex items-center justify-between px-6">
 
-      <div class="flex items-center gap-3">
-        <img src="https://i.pravatar.cc/40?img=32" class="rounded-full">
-        <p class="font-semibold">Rachel Hoffman</p>
-      </div>
+
 
       <!-- CALL ICONS -->
       <div class="flex gap-4 text-gray-500">
