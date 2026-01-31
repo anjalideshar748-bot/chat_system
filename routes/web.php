@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
+use App\Http\Controllers\FriendshipController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -24,3 +26,10 @@ Route::get('/dashboard', function () {
 });
 
 require __DIR__.'/auth.php';
+ // routes/web.php
+
+Route::middleware('auth')->group(function () {
+    Route::post('/friend-request/send/{id}', [FriendshipController::class, 'send']);
+    Route::post('/friend-request/accept/{id}', [FriendshipController::class, 'accept']);
+});
+

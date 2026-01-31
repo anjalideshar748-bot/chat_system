@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Friendship;
 
 class User extends Authenticatable
 {
@@ -45,4 +46,29 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    // app/Models/User.php
+
+public function friends()
+{
+    return $this->belongsToMany(
+        User::class,
+        'friendships',
+        'user_id',
+        'friend_id'
+    )->wherePivot('status', 'accepted');
 }
+
+public function sentFriendRequests()
+{
+    return $this->hasMany(Friendship::class, 'user_id')
+                ->where('status', 'pending');
+}
+
+public function receivedFriendRequests()
+{
+    return $this->hasMany(Friendship::class, 'friend_id')
+                ->where('status', 'pending');
+}
+
+}
+
