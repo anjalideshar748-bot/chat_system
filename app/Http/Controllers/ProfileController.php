@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use App\Models\User;
+use App\Models\friend;
 
 class ProfileController extends Controller
 {
@@ -61,8 +62,10 @@ class ProfileController extends Controller
     public function search_user(Request $request){
         $search = $request->get('search');
         $user = User::where('name','like',"%$search%")->get();
+        $me=User::where('id',Auth::user()->id)->first();
 
-        return view('dashboard', compact('user'));
+
+        return view('dashboard', compact('user','me'));
     }
 
 }

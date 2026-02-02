@@ -4,9 +4,10 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use App\Models\Friendship;
+use App\Models\friend;
 
 class User extends Authenticatable
 {
@@ -48,27 +49,20 @@ class User extends Authenticatable
     }
     // app/Models/User.php
 
-public function friends()
-{
-    return $this->belongsToMany(
-        User::class,
-        'friendships',
-        'user_id',
-        'friend_id'
-    )->wherePivot('status', 'accepted');
-}
-
-public function sentFriendRequests()
-{
-    return $this->hasMany(Friendship::class, 'user_id')
-                ->where('status', 'pending');
-}
-
-public function receivedFriendRequests()
-{
-    return $this->hasMany(Friendship::class, 'friend_id')
-                ->where('status', 'pending');
-}
+//
+    /**
+     * Get all of the friend for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function friend(): HasMany
+    {
+        return $this->hasMany(friend::class, 'user_id');
+    }
+     public function friendRequests(): HasMany
+    {
+        return $this->hasMany(Friend::class, 'friend_id');
+    }
 
 }
 

@@ -3,7 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
-use App\Http\Controllers\FriendshipController;
+use App\Http\Controllers\userController;
+
 
 
 Route::get('/', function () {
@@ -29,7 +30,7 @@ require __DIR__.'/auth.php';
  // routes/web.php
 
 Route::middleware('auth')->group(function () {
-    Route::post('/friend-request/send/{id}', [FriendshipController::class, 'send']);
-    Route::post('/friend-request/accept/{id}', [FriendshipController::class, 'accept']);
+    Route::post('/friend-request/send/{user_id}{friend_id}', [userController::class, 'FriendRequest'])->name('friend.request.send');
+    Route::post('/friend-request/accept/{friend_id}', [userController::class, 'accept'])->name('friend.request.accept');
 });
 
