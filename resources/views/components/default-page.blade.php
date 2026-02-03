@@ -1,89 +1,85 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Chat UI</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Console | Digital Voting</title>
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="h-screen w-screen bg-[#1f6b4e] flex items-center justify-center">
+<body class="bg-[#196C3E] text-gray-100">
 
+    <div class="w-full h-screen flex flex-col">
 
-    <!-- MAIN WRAPPER -->
-    <div class="w-[95%] h-[95%] bg-white rounded-lg shadow-xl flex overflow-hidden">
+        <!-- HEADER -->
+        <header
+                    class="px-10 py-6 backdrop-blur bg-[#238B55] border-b border-white/20
+                   flex justify-between items-center sticky top-0 z-20 shadow-md">
+            <div>
+                 <p class="text-green-200 text-sm">Welcome back,</p>
+                <h1 class="text-3xl font-semibold tracking-tight text-white">
+                    {{ auth()->user()->name }}
+                </h1>
 
-        <!-- SIDEBAR -->
-        <aside class="w-1/4 bg-[#2f7f5f] text-white flex flex-col">
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button class="text-sm bg-white text-[#2f7f5f] px-3 py-1 rounded hover:bg-gray-200">
-                    Logout
+            </div>
+
+            <div class="flex items-center gap-3">
+                <!-- SEARCH -->
+                <div class="px-10 pt-6">
+                    <form method="get" action="{{ route('search_user') }}">
+                       <div class="relative">
+                            <input type="text" name="search" placeholder="Search users..."
+                                value="{{ request('search') }}"
+                                class="w-full px-5 py-3 rounded-xl
+                                       bg-[#D9F6E4] text-gray-800 placeholder-gray-500
+                                       shadow-md
+                                       focus:outline-none focus:ring-2 focus:ring-[#3ECFA3]/70" />
+                            <span class="absolute right-4 top-3 text-gray-400">⌕</span>
+                        </div>
+                    </form>
+                </div>
+
+                <button
+                    class="w-11 h-11 rounded-full border border-gray-200
+                       flex items-center justify-center
+                       hover:bg-[#3ECFA3]/20 transition">
+                    ⋮
                 </button>
-            </form>
-
-
-            <!-- Logo -->
-            <div class="p-4 flex items-center justify-between border-b border-white/20">
-                <a><h1 class="font-bold text-lg">talk</h1></a>
-
-                <a>
-                     <button class="bg-white text-[#2f7f5f] bold rounded-full w-10 h-10 hover:scale-110 transition">🕭</button></a>
             </div>
-
-            <!-- Search -->
-
-            <form method="get" action="{{ route('search_user') }}" class="p-4">
-                <input type="text" name="search" placeholder="Search"
-                    class="w-full px-4 py-2 rounded bg-[#3c8c6d] placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white" />
-
-            </form>
+        </header>
 
 
 
+        <!-- NAVIGATION TABS -->
+        <nav class="px-10 pt-6">
+            <div class="inline-flex bg-[#D9F6E4] rounded-full p-1 shadow-md">
+                <a href="#"
+                    class="px-6 py-2 rounded-full text-sm font-medium
+                         bg-[#196C3E] text-white
+                      transition">
+                    All Chats
+                </a>
 
-
-
-
-            <!-- Contacts -->
-            <div class="flex-1 overflow-y-auto space-y-1 px-2">
-                @foreach ($user as $user)
-                    <div class=" flex row-auto gap-4 px-3 py-3 rounded-lg bg-[#3c8c6d] cursor-pointer">
-
-                        <img src="https://i.pravatar.cc/40?img=32" class="rounded-full">
-                        <p class="font-semibold">{{ $user->name }}</p>
-
-                    </div>
-                @endforeach
-
-
-
+                <a href="#"
+                    class="px-6 py-2 rounded-full text-sm font-medium
+                     text-[#196C3E] hover:text-white
+                           hover:bg-[#3ECFA3]/40 transition">
+                    Requests
+                </a>
             </div>
-        </aside>
+        </nav>
 
-        <!-- CHAT AREA -->
-        <main class="flex-1 flex flex-col bg-gray-50">
-
-            <!-- CHAT HEADER -->
-            <div class="h-16 bg-white border-b flex items-center justify-between px-6">
-
-
-{{$slot}}
-
-            </div>
-
-            <!-- CHAT MESSAGES -->
-
-
-
-    </div>
-
-
-    </main>
+        <!-- CONTENT -->
+        <main class="flex-1 overflow-y-auto px-10 py-6 space-y-3">
+            {{ $slot }}
+        </main>
 
     </div>
 
 </body>
 
 </html>
+
