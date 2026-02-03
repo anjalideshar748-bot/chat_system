@@ -62,10 +62,10 @@ class ProfileController extends Controller
     public function search_user(Request $request){
         $search = $request->get('search');
         $user = User::where('name','like',"%$search%")->get();
-        $me=User::where('id',Auth::user()->id)->first();
+        $friend = friend::where('user_id',Auth::user()->id)->get();
 
 
-        return view('dashboard', compact('user','me'));
+        return view('Search_dashboard', compact('user','friend'));
     }
 
 }

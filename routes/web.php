@@ -4,8 +4,8 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
 use App\Http\Controllers\userController;
-
-
+use App\Models\friend;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return view('welcome');
@@ -17,7 +17,8 @@ Route::get('/', function () {
 Route::middleware('auth')->group(function () {
     //for dashboard
 Route::get('/dashboard', function () {
-    $user = User::all();
+    $user = friend::where('status','accepted')->get();
+
     return view('dashboard',compact('user'));
 })->middleware(['auth', 'verified'])->name('dashboard');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
