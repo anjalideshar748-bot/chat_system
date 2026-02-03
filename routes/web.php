@@ -17,7 +17,14 @@ Route::get('/', function () {
 Route::middleware('auth')->group(function () {
     //for dashboard
 Route::get('/dashboard', function () {
-    $user = friend::where('status','accepted')->get();
+    $friend = friend::where('status','accepted')->get();
+    $user=$friend->map(function($friend){
+        if($friend->user_id == Auth::id()){
+            return User::find($friend->friend_id);
+        }else{
+            return User::find($friend->user_id);
+        }
+    });
 
     return view('dashboard',compact('user'));
 })->middleware(['auth', 'verified'])->name('dashboard');

@@ -63,6 +63,15 @@ class User extends Authenticatable
     {
         return $this->hasMany(Friend::class, 'friend_id');
     }
+    /**
+     * Get all of the chat for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function chat(): HasMany
+    {
+        return $this->hasMany(chat::class);
+    }
 
 }
 
