@@ -46,6 +46,16 @@
 
 
 
+            <!-- Contacts -->
+            <div class="flex-1 overflow-y-auto space-y-1 px-2">
+                @foreach ($user as $user)
+                    <div class=" flex row-auto gap-4 px-3 py-3 rounded-lg bg-[#3c8c6d] cursor-pointer">
+
+                        <img src="https://i.pravatar.cc/40?img=32" class="rounded-full">
+                        <p class="font-semibold">{{ $user->name }}</p>
+
+                    </div>
+                @endforeach
 
 
 
@@ -59,13 +69,7 @@
             <div class="h-16 bg-white border-b flex items-center justify-between px-6">
 
 
-
-                {{-- <!-- CALL ICONS -->
-                <div class="flex gap-4 text-gray-500">
-                    <button class="hover:text-green-600 transition" title="Video Call">📹</button>
-                    <button class="hover:text-green-600 transition" title="Audio Call">📞</button>
-                    <button class="hover:text-gray-800 transition">⋮</button>
-                </div> --}}
+{{$slot}}
 
             </div>
 

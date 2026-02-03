@@ -29,7 +29,7 @@
                 <a><h1 class="font-bold text-lg">talk</h1></a>
 
                 <a>
-                     <button class="bg-white text-[#2f7f5f]  rounded-full w-10 h-10 hover:scale-110 transition">🕭</button></p></a>
+                     <button class="bg-white text-[#2f7f5f]  rounded-full w-10 h-10 hover:scale-110 transition">🕭</button></a>
             </div>
 
             <!-- Search -->
