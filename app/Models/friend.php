@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\User;
 use App\Models\chat;
+
 
 class friend extends Model
 {
@@ -23,4 +25,14 @@ class friend extends Model
     {
         return $this->hasMany(chat::class);
     }
+   public function sender()
+{
+    return $this->belongsTo(User::class, 'user_id');
+}
+
+public function receiver()
+{
+    return $this->belongsTo(User::class, 'friend_id');
+}
+
 }

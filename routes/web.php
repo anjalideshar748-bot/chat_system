@@ -33,6 +33,7 @@ Route::get('/dashboard', function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/search_user',[ProfileController::class,'search_user'])->name('search_user');
     Route::get('/friend-requests',[userController::class,'friendRequestView'])->name('friend.requests.view');
+    
 });
 
 require __DIR__.'/auth.php';
@@ -41,6 +42,7 @@ require __DIR__.'/auth.php';
 Route::middleware('auth')->group(function () {
     Route::post('/friend-request/send/{user_id}{friend_id}', [userController::class, 'FriendRequest'])->name('friend.request.send');
     Route::post('/friend-request/accept/{friend_id}', [userController::class, 'accept'])->name('friend.request.accept');
+    Route::post('/friend-request/reject/{friend_id}', [userController::class, 'reject'])->name('friend.request.reject');
 
 });
 

@@ -4,33 +4,30 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Console | Digital Voting</title>
+    <title>Chatting system</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-[#EAFBF3] text-gray-800">
+<body class=" text-gray-800">
 
     <div class="w-full h-screen flex flex-col">
 
         <!-- HEADER -->
-        <header
-                    class="px-10 py-6 backdrop-blur bg-[#BFF3DC]
-                   border-b border-[#3c8c6d]/20
+        <header class="px-10 py-2 backdrop-blur bg-gradient-to-r from-emerald-600 to-emerald-300
                    flex justify-between items-center
                    sticky top-0 z-20 shadow-sm">
             <div>
-              <p class="text-[#3c8c6d] text-sm">Welcome back,</p>
-               <h1 class="text-3xl font-semibold tracking-tight text-gray-900">
+                <p class="text-white text-3xl font-semibold">Talk</p>
+               {{-- <h1 class="text-3xl font-semibold tracking-tight text-gray-900">
                     {{ auth()->user()->name }}
-                </h1>
-
+                </h1> --}}
             </div>
 
-            <div class="flex items-center gap-3">
+            <div class="flex items-center">
                 <!-- SEARCH -->
-                <div class="px-10 pt-6">
+                <div class="px-7 pt-6">
                     <form method="get" action="{{ route('search_user') }}">
                        <div class="relative">
                             <input type="text" name="search" placeholder="Search users..."
@@ -45,24 +42,17 @@
                     </form>
                 </div>
 
-                <button
-                     class="w-11 h-11 rounded-full border border-gray-300
-                           flex items-center justify-center
-                           hover:bg-[#7FE3C3]/40 transition">
-                    ⋮
-                </button>
+
             </div>
         </header>
 
-
-
         <!-- NAVIGATION TABS -->
-        <nav class="px-10 pt-6">
-            <div class="inline-flex bg-white rounded-full p-1 shadow">
-                <a href="#"
+        <nav class="px-5 pt-6">
+            <div class="inline-flex bg-white w-full p-1 shadow">
+                <a href="/dashboard"
                     class="px-6 py-2 rounded-full text-sm font-medium
-                           bg-[#3c8c6d] text-white
-                           hover:bg-[#2f6f56] transition">
+                           text-[#3c8c6d]
+                           hover:bg-[#7FE3C3]/30 transition">
                     All Chats
                 </a>
 
@@ -71,16 +61,25 @@
                            text-[#3c8c6d]
                            hover:bg-[#7FE3C3]/30 transition">
                     Requests
+
+                </a>
+
+                <a href="#"
+                    class="px-6 py-2 rounded-full text-sm font-medium
+                           text-[#3c8c6d]
+                           hover:bg-[#7FE3C3]/30 transition">
+                    Profile
                 </a>
             </div>
         </nav>
 
         <!-- CONTENT -->
-        <main class="flex-1 overflow-y-auto px-10 py-6 space-y-3">
+        <main class="flex-1 overflow-y-auto px-5 py-6 space-y-3">
             {{ $slot }}
         </main>
 
     </div>
+
 
 </body>
 

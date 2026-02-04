@@ -23,5 +23,6 @@ class userController extends Controller
         $friend->save();
         return back();
     }
+    
 
 }

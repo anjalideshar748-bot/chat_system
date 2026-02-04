@@ -11,6 +11,7 @@ use Illuminate\View\View;
 use App\Models\User;
 use App\Models\friend;
 
+
 class ProfileController extends Controller
 {
     /**
@@ -66,6 +67,18 @@ class ProfileController extends Controller
 
 
         return view('Search_dashboard', compact('user','friend'));
+    }
+      public function accept($id)
+    {
+        $user_id = Auth::id();
+
+        // Update existing pending request
+        Friend::where('user_id', $id)
+              ->where('friend_id', $user_id)
+              ->where('status', 'pending')
+              ->update(['status' => 'accepted']);
+
+        return back()->with('success', 'Friend request accepted');
     }
 
 }
