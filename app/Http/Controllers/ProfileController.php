@@ -68,7 +68,7 @@ class ProfileController extends Controller
 
         return view('Search_dashboard', compact('user','friend'));
     }
-      public function accept($id)
+    public function accept($id)
     {
         $user_id = Auth::id();
 

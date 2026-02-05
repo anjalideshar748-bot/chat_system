@@ -17,7 +17,10 @@ Route::get('/', function () {
 Route::middleware('auth')->group(function () {
     //for dashboard
 Route::get('/dashboard', function () {
-    $friend = friend::where('status','accepted')->get();
+    $friend = friend::where(function($query) {
+        $query->where('user_id', Auth::id())
+              ->orWhere('friend_id', Auth::id());
+    })->get();
     $user=$friend->map(function($friend){
         if($friend->user_id == Auth::id()){
             return User::find($friend->friend_id);
@@ -32,8 +35,10 @@ Route::get('/dashboard', function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/search_user',[ProfileController::class,'search_user'])->name('search_user');
-    Route::get('/friend-requests',[userController::class,'friendRequestView'])->name('friend.requests.view');
-    
+    Route::get('/friend-requests',[userController::class,'friendRequestView'])->name('friend.requests');
+
+
+
 });
 
 require __DIR__.'/auth.php';
@@ -41,7 +46,7 @@ require __DIR__.'/auth.php';
 
 Route::middleware('auth')->group(function () {
     Route::post('/friend-request/send/{user_id}{friend_id}', [userController::class, 'FriendRequest'])->name('friend.request.send');
-    Route::post('/friend-request/accept/{friend_id}', [userController::class, 'accept'])->name('friend.request.accept');
+    Route::post('/friend-request/accept/{friend_id}{user_id}', [userController::class, 'requestAccept'])->name('friend.request.accept');
     Route::post('/friend-request/reject/{friend_id}', [userController::class, 'reject'])->name('friend.request.reject');
 
 });

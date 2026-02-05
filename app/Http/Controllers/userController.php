@@ -4,25 +4,28 @@ namespace App\Http\Controllers;
 
 use App\Models\friend;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class userController extends Controller
 {
     //send friend request
-    public function FriendRequest($user_id, $friend_id){
-        if(friend::where('user_id',$user_id)->where('friend_id',$friend_id)->exists()){
-            return back()->with('error','Friend request already sent');
-        }if($user_id==$friend_id){
-            return back()->with('error','You cannot send friend request to yourself');
-        }
+    public function friendRequestView(){
+        $friend = Friend::where('friend_id',Auth::User()->id)->where('status','pending')->get();
+        $user = $friend->map(function($friend){
+            return User::find($friend->user_id);
 
-
-        $friend=new friend();
-        $friend->user_id=$user_id;
-        $friend->friend_id=$friend_id;
-        $friend->status='pending';
-        $friend->save();
-        return back();
+        });
+        return view("FriendRequest",compact('friend','user'));
     }
-    
+
+    // request accept
+    public function requestAccept($friend_id, $user_id){
+        $friend = Friend::where('friend_id',$friend_id)->where('user_id',$user_id)->first();
+        $friend->status='accepted';
+        $friend->save();
+        return redirect()->back();
+
+    }
 
 }

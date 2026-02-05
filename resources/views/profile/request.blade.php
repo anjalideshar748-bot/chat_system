@@ -11,7 +11,7 @@
                 <p class="font-semibold">{{ $user->name }}</p>
             </div>
 
-            <form method="POST" action="{{ route('friend.accept', $user->id) }}">
+            <form method="POST" action="{{ route('friend.request.view', $user->id) }}">
                 @csrf
                 <button
                     class="px-4 py-2 text-sm rounded-full
