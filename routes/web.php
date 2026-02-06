@@ -39,13 +39,14 @@ Route::get('/dashboard', function () {
 
 
 
+
 });
 
 require __DIR__.'/auth.php';
  // routes/web.php
 
 Route::middleware('auth')->group(function () {
-    Route::post('/friend-request/send/{user_id}{friend_id}', [userController::class, 'FriendRequest'])->name('friend.request.send');
+    Route::post('/friend-request/send/{user_id}{friend_id}', [userController::class, 'FriendRequestSend'])->name('friend.request.send');
     Route::post('/friend-request/accept/{friend_id}{user_id}', [userController::class, 'requestAccept'])->name('friend.request.accept');
     Route::post('/friend-request/reject/{friend_id}', [userController::class, 'reject'])->name('friend.request.reject');
 

@@ -63,7 +63,7 @@ class ProfileController extends Controller
     public function search_user(Request $request){
         $search = $request->get('search');
         $user = User::where('name','like',"%$search%")->get();
-        $friend = friend::where('user_id',Auth::user()->id)->get();
+        $friend = friend::where('user_id',Auth::user()->id)->orWhere('friend_id',Auth::user()->id)->get();
 
 
         return view('Search_dashboard', compact('user','friend'));
@@ -80,6 +80,7 @@ class ProfileController extends Controller
 
         return back()->with('success', 'Friend request accepted');
     }
+
 
 }
 

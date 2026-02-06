@@ -64,7 +64,7 @@
                  </a>
 
 
-                 <a href="#"
+                 <a href="{{ route('profile.edit') }}"
                      class="px-6 py-2 rounded-full text-sm font-medium
                            text-[#3c8c6d]
                            hover:bg-[#7FE3C3]/30 transition">
