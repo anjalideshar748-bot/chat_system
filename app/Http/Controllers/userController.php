@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
+
+
+
+
 class userController extends Controller
 {
     //send friend request
@@ -36,5 +40,17 @@ class userController extends Controller
         return redirect()->back();
 
     }
+
+    //chat area
+  
+    public function show($id)
+{
+    $user = User::findOrFail($id);
+
+    return view('chat-area', compact('user'));
+}
+
+
+
 
 }
