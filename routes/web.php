@@ -38,6 +38,7 @@ Route::get('/dashboard', function () {
     Route::get('/search_user',[ProfileController::class,'search_user'])->name('search_user');
     Route::get('/friend-requests',[userController::class,'friendRequestView'])->name('friend.requests');
     Route::get('/chat/{id}', [UserController::class, 'show'])->name('chat.show');
+    Route::post('/send-message', [UserController::class, 'sendMessage'])->name('message.send');
 
 
 

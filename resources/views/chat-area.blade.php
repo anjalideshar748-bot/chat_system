@@ -10,10 +10,10 @@
                 flex flex-col md:flex-row">
 
         <!-- ================= CHAT AREA ================= -->
-        <main class="flex-1 flex flex-col bg-gray-50">
+        <main class="flex-1 flex flex-col bg-gray-50" >
 
             <!-- CHAT HEADER -->
-          <div class="flex items-center gap-3">
+          <div class="flex items-center gap-3 shadow-md p-3 rounded-lg bg-white" >
 
     <button class="md:hidden text-xl text-gray-500">
         ←
@@ -31,63 +31,69 @@
             {{ $user->is_online ? 'Active now' : 'Offline' }}
         </p>
     </div>
+    <div>
+
+    </div>
 
 </div>
 
 
             <!-- MESSAGES -->
-            <div class="flex-1 p-4 md:p-8 overflow-y-auto space-y-6">
+          <div class="flex-auto p-4 overflow-y-auto space-y-2">
 
-                <!-- Incoming -->
-                <div class="flex gap-3">
-                    <img src="https://i.pravatar.cc/36"
-                         class="w-8 h-8 rounded-full">
+@foreach($messages as $msg)
 
-                    <div
-                        class="bg-white px-4 py-3 rounded-2xl shadow
-                               text-sm max-w-[80%] md:max-w-[60%]">
-                        Hello! This works perfectly on mobile too.
-                    </div>
-                </div>
+    @if($msg->sender_id == auth()->id())
 
-                <!-- Outgoing -->
-                <div class="flex justify-end gap-3">
-                    <div
-                        class="bg-[#3c8c6d] text-white px-4 py-3
-                               rounded-2xl shadow text-sm
-                               max-w-[80%] md:max-w-[60%]">
-                        Clean, responsive, and premium ✨
-                    </div>
-
-                    <img src="https://i.pravatar.cc/36?img=5"
-                         class="w-8 h-8 rounded-full">
-                </div>
+        <!-- SENT -->
+        <div class="flex justify-end">
+            <div class="bg-[#3c8c6d] text-white px-4 py-2 rounded-xl max-w-xs">
+                {{ $msg->message }}
             </div>
+        </div>
+
+    @else
+
+        <!-- RECEIVED -->
+        <div class="flex justify-start">
+            <div class="bg-gray-200 px-4 py-2 rounded-xl max-w-xs">
+                {{ $msg->message }}
+            </div>
+        </div>
+
+    @endif
+
+@endforeach
+
+</div>
 
             <!-- INPUT -->
-            <div
-                class="h-18 px-4 md:px-6 py-3
-                       bg-white border-t
-                       flex items-center gap-3">
+           <!-- INPUT -->
+<div class="h-18 px-4 md:px-6 py-3 bg-white border-t">
 
-                <input
-                    type="text"
-                    placeholder="Type a message..."
-                    class="flex-1 px-5 py-3 rounded-full
-                           bg-gray-100 text-sm
-                           focus:outline-none
-                           focus:ring-2 focus:ring-[#3c8c6d]"
-                />
+   <form class="flex items-center gap-3" method="post" action="{{ route('message.send') }}">
+    @csrf
 
-                <button
-                    class="w-11 h-11 md:w-12 md:h-12
-                           rounded-full bg-[#3c8c6d]
-                           text-white text-lg
-                           hover:scale-105 transition">
-                    ➤
-                </button>
-            </div>
+    <input type="hidden" name="receiver_id" value="{{ $user->id }}">
 
+    <input
+        type="text" name="message"
+        placeholder="Type your message here"
+        class="flex-1 bg-gray-100 rounded-full px-4 py-2
+               focus:outline-none focus:ring-2 focus:ring-[#3c8c6d]"
+    >
+
+    <button type="submit"
+        class="w-11 h-11 md:w-12 md:h-12
+               flex items-center justify-center
+               rounded-full bg-[#3c8c6d]
+               text-white text-lg
+               hover:scale-105 transition">
+        ➤
+    </button>
+</form>
+
+</div>
         </main>
 
     </div>

@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\friend;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Friend;
+use App\Models\Message;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+
 
 
 
@@ -43,15 +45,45 @@ class userController extends Controller
 
     //chat area
 
-    public function show($id)
+
+
+   public function show($id)
 {
     $user = User::findOrFail($id);
 
-    return view('chat-area', compact('user'));
+    $messages = Message::where(function($q) use ($id) {
+            $q->where('sender_id', Auth::id())
+              ->where('receiver_id', $id);
+        })
+        ->orWhere(function($q) use ($id) {
+            $q->where('sender_id', $id)
+              ->where('receiver_id', Auth::id());
+        })
+        ->orderBy('created_at')
+        ->get();
+
+    return view('chat-area', compact('user','messages'));
+}
+    public function sendMessage(Request $request)
+{
+    $request->validate([
+        'message' => 'required',
+        'receiver_id' => 'required'
+    ]);
+
+    Message::create([
+        'sender_id' => Auth::id(),
+        'receiver_id' => $request->receiver_id,
+        'message' => $request->message
+    ]);
+
+    return back();
+}
 }
 
 
 
 
 
-}
+
+
