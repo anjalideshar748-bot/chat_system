@@ -31,6 +31,7 @@
             {{ $user->is_online ? 'Active now' : 'Offline' }}
         </p>
     </div>
+
 </div>
 
 

@@ -42,13 +42,14 @@ class userController extends Controller
     }
 
     //chat area
-  
+
     public function show($id)
 {
     $user = User::findOrFail($id);
 
     return view('chat-area', compact('user'));
 }
+
 
 
 
