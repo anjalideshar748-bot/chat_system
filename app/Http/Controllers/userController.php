@@ -68,17 +68,32 @@ class userController extends Controller
 {
     $request->validate([
         'message' => 'required',
-        'receiver_id' => 'required'
-    ]);
+        'receiver_id' => 'required',
+        'sender_id' => 'required',
 
-    Message::create([
-        'sender_id' => Auth::id(),
-        'receiver_id' => $request->receiver_id,
-        'message' => $request->message
     ]);
+    $message=new message();
+    $message->sender_id=$request->sender_id;
+    $message->receiver_id=$request->receiver_id;
+    $message->message=$request->message;
+    $message->save();
+
 
     return back();
 }
+public function delete($id)
+{
+    $message = Message::findOrFail($id);
+
+    if ($message->sender_id != Auth::id()) {
+        abort(403);
+    }
+
+    $message->delete();
+
+    return back();
+}
+
 }
 
 
