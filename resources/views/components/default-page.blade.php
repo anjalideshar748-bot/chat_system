@@ -14,7 +14,7 @@
 
      <div class="w-full h-screen flex flex-col">
 
-         <!-- HEADER -->
+         <!-- HEADER-->
          <header
              class="px-10 py-2 backdrop-blur bg-gradient-to-r from-emerald-600 to-emerald-300
                    flex justify-between items-center
