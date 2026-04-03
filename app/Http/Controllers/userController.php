@@ -72,24 +72,39 @@ class userController extends Controller
         'sender_id' => 'required',
 
     ]);
-    $message=new message();
+    $message=new Message();
     $message->sender_id=$request->sender_id;
     $message->receiver_id=$request->receiver_id;
     $message->message=$request->message;
     $message->save();
 
+    if ($request->wantsJson() || $request->ajax()) {
+        return response()->json([
+            'success' => true,
+            'message' => [
+                'id' => $message->id,
+                'message' => $message->message,
+                'time' => $message->created_at->format('H:i')
+            ]
+        ]);
+    }
 
     return back();
 }
-public function delete($id)
+public function delete($id, Request $request)
 {
     $message = Message::findOrFail($id);
 
     if ($message->sender_id != Auth::id()) {
+        if ($request->wantsJson() || $request->ajax()) return response()->json(['error' => 'Unauthorized'], 403);
         abort(403);
     }
 
     $message->delete();
+
+    if ($request->wantsJson() || $request->ajax()) {
+        return response()->json(['success' => true]);
+    }
 
     return back();
 }

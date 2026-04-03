@@ -80,7 +80,13 @@ public function message(): HasMany
     return $this->hasMany(message::class);
 }
 
-
-
-
+/**
+ * Get the user's online status
+ *
+ * @return bool
+ */
+public function getIsOnlineAttribute()
+{
+    return \Illuminate\Support\Facades\Cache::has('user-is-online-' . $this->id);
+}
 }

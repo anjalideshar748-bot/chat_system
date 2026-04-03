@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Talk | Modern Chat - Teal Edition</title>
+    <!-- Tailwind CSS v3 + Font Awesome Icons + Google Fonts Inter -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            transition: all 0.2s ease;
+        }
+        body {
+            background: linear-gradient(135deg, #f0fdf4 0%, #e6f7f0 100%);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        /* Custom scrollbar for chat messages - teal theme */
+        .messages-container::-webkit-scrollbar {
+            width: 5px;
+        }
+        .messages-container::-webkit-scrollbar-track {
+            background: #e6f7f0;
+            border-radius: 10px;
+        }
+        .messages-container::-webkit-scrollbar-thumb {
+            background: #3c8c6d;
+            border-radius: 10px;
+        }
+        .messages-container::-webkit-scrollbar-thumb:hover {
+            background: #2d6b52;
+        }
+        /* Friend list hover effect - teal theme */
+        .friend-item {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .friend-item:hover {
+            background: linear-gradient(95deg, #e6f7f0 0%, #d1f0e3 100%);
+            transform: translateX(4px);
+        }
+        .friend-item.active {
+            background: linear-gradient(95deg, #c8e9db 0%, #b3e2d1 100%);
+            border-left: 3px solid #3c8c6d;
+        }
+        /* Search input focus effect */
+        .search-input:focus {
+            box-shadow: 0 0 0 3px rgba(60, 140, 109, 0.1);
+            border-color: #3c8c6d;
+        }
+        /* Message bubble animations */
+        .message-bubble {
+            animation: fadeInUp 0.3s ease-out;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        /* Talk logo custom styling - teal theme */
+        .talk-logo {
+            background: linear-gradient(135deg, #3c8c6d, #2d6b52);
+            box-shadow: 0 4px 10px rgba(60, 140, 109, 0.2);
+        }
+        /* Typing indicator */
+        .typing-dot {
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 60%, 100% { opacity: 0.3; transform: scale(0.8); }
+            30% { opacity: 1; transform: scale(1.2); }
+        }
+        /* Modal animation */
+        .modal-backdrop {
+            animation: fadeIn 0.2s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .modal-content {
+            animation: slideUp 0.3s ease-out;
+        }
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        /* Profile avatar clickable */
+        .profile-card-clickable {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .profile-card-clickable:hover {
+            background: linear-gradient(95deg, #e6f7f0, #d1f0e3);
+            transform: scale(1.02);
+        }
+        /* Status pulse animation for online users */
+        .status-pulse {
+            animation: pulse-ring 1.5s infinite;
+        }
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(60, 140, 109, 0.4); }
+            70% { box-shadow: 0 0 0 4px rgba(60, 140, 109, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(60, 140, 109, 0); }
+        }
+        /* Custom button styles */
+        .btn-primary {
+            background-color: #3c8c6d;
+            transition: all 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #2d6b52;
+        }
+        .text-primary {
+            color: #3c8c6d;
+        }
+        .border-primary {
+            border-color: #3c8c6d;
+        }
+        .bg-primary-light {
+            background: linear-gradient(135deg, #3c8c6d, #2d6b52);
+        }
+        /* Custom gradient backgrounds */
+        .sidebar-header {
+            background: linear-gradient(135deg, #e6f7f0 0%, #d1f0e3 100%);
+        }
+        .chat-header {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+        }
+        .message-sent {
+            background-color: #3c8c6d;
+            color: white;
+        }
+        .message-received {
+            background-color: white;
+            border: 1px solid #e2e8f0;
+            color: #1f2937;
+        }
+        .status-online-dot {
+            background-color: #10b981;
+        }
+        .status-offline-dot {
+            background-color: #9ca3af;
+        }
+    </style>
+</head>
+<body class="h-screen overflow-hidden">
+
+    <div class="flex h-screen w-full">
+
+        <!-- LEFT SIDEBAR: Friend List + Search - Teal Theme -->
+        <div class="w-full md:w-96 lg:w-96 bg-white/95 backdrop-blur-sm border-r border-teal-100 flex flex-col shadow-2xl z-10">
+
+            <!-- App Header inside sidebar with TALK branding - Teal Gradient -->
+            <div class="p-5 border-b border-teal-100 sidebar-header">
+                <div class="flex items-center gap-3">
+                    <div class="talk-logo w-10 h-10 rounded-xl flex items-center justify-center shadow-md">
+                        <i class="fas fa-comment-dots text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-extrabold bg-gradient-to-r from-teal-700 to-teal-600 bg-clip-text text-transparent tracking-tight">Talk</h1>
+                        <p class="text-xs text-teal-600 font-medium">Connect & Chat</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search User Section -->
+            <div class="p-4 bg-white border-b border-teal-50">
+                <div class="relative">
+                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-teal-400 text-sm"></i>
+                    <input type="text" id="searchUserInput" placeholder="Search users by name or email..."
+                           class="search-input w-full pl-10 pr-4 py-2.5 border border-teal-200 rounded-xl focus:outline-none focus:border-teal-400 bg-gray-50/50 text-sm">
+                </div>
+                <div id="searchResults" class="hidden mt-2 bg-white rounded-xl border border-teal-100 shadow-lg max-h-48 overflow-y-auto absolute left-4 right-4 z-20"></div>
+            </div>
+
+            <!-- Friends Section Title with Online Counter -->
+            <div class="px-5 pt-4 pb-2 flex justify-between items-center">
+                <h2 class="text-xs font-semibold text-teal-600 uppercase tracking-wider">
+                    <i class="fas fa-user-friends mr-1 text-teal-500"></i> Friends · Live Status
+                </h2>
+                <div class="flex gap-2">
+                    <span class="text-xs bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full font-medium flex items-center gap-1">
+                        <i class="fas fa-circle text-[6px] text-teal-600"></i> <span id="onlineCount">0</span>
+                    </span>
+                    <span id="friendsCount" class="text-xs bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full font-medium">0</span>
+                </div>
+            </div>
+
+            <!-- Friend List Container with Dynamic Status Indicators -->
+            <div id="friendListContainer" class="flex-1 overflow-y-auto px-2 pb-4 space-y-1">
+                <div class="text-center py-10 text-teal-400 text-sm">
+                    <i class="fas fa-users text-3xl mb-2 opacity-30"></i>
+                    <p>No friends yet</p>
+                    <p class="text-xs mt-1">Search and add friends to start chatting</p>
+                </div>
+            </div>
+
+            <!-- Current User Info with Live Status - Teal Theme -->
+            <div id="currentUserProfileBtn" class="p-4 border-t border-teal-100 bg-gradient-to-r from-teal-50 to-teal-100/30 profile-card-clickable">
+                <div class="flex items-center gap-3">
+                    <div class="relative">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-teal-500 to-teal-600 flex items-center justify-center text-white shadow-sm">
+                            <i class="fas fa-user-astronaut text-sm"></i>
+                        </div>
+                        <span id="currentUserStatusDot" class="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-500 ring-2 ring-white status-pulse"></span>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-semibold text-gray-800">Alex Morgan</p>
+                        <p class="text-xs text-gray-500 flex items-center gap-1">
+                            <i class="fas fa-circle text-[6px] text-teal-600"></i>
+                            <span id="currentUserStatusText">Online</span>
+                        </p>
+                    </div>
+                    <i class="fas fa-chevron-right text-teal-400 text-xs"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT SIDE: CHAT AREA -->
+        <div id="chatArea" class="flex-1 flex flex-col bg-gradient-to-br from-teal-50 to-gray-100/50">
+            <!-- No Chat Selected State -->
+            <div id="noChatSelected" class="flex-1 flex flex-col items-center justify-center text-center p-8">
+                <div class="talk-logo w-28 h-28 rounded-full flex items-center justify-center mb-4 shadow-xl">
+                    <i class="fas fa-comment-dots text-5xl text-white"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-teal-700 mb-2">Welcome to Talk</h3>
+                <p class="text-gray-500 max-w-sm">Select a friend from the list to start chatting</p>
+                <div class="mt-6 flex gap-2 text-xs text-teal-400">
+                    <i class="fas fa-lock"></i>
+                    <span>End-to-end encrypted</span>
+                </div>
+            </div>
+
+            <!-- Active Chat Panel -->
+            <div id="activeChatPanel" class="hidden flex-1 flex-col h-full">
+                <!-- Chat Header with Live User Status - Teal Theme -->
+                <div class="chat-header border-b border-teal-100 px-6 py-4 flex items-center gap-3 shadow-sm">
+                    <div class="relative">
+                        <div id="chatAvatar" class="w-12 h-12 rounded-full bg-gradient-to-r from-teal-400 to-teal-500 flex items-center justify-center text-white text-xl shadow-md">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <span id="chatHeaderStatusDot" class="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full ring-2 ring-white"></span>
+                    </div>
+                    <div class="flex-1">
+                        <h2 id="chatUserName" class="font-bold text-gray-800 text-lg">Select a friend</h2>
+                        <div id="chatUserStatus" class="text-xs flex items-center gap-1">
+                            <i class="fas fa-circle text-[6px]"></i>
+                            <span>Offline</span>
+                        </div>
+                    </div>
+                    <button id="closeChatBtn" class="text-teal-400 hover:text-teal-600 transition md:hidden">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Messages Container -->
+                <div id="messagesContainer" class="flex-1 overflow-y-auto p-4 space-y-3 messages-container bg-gray-50/30">
+                    <div class="text-center text-teal-400 text-sm py-10">
+                        <i class="fas fa-comment-smile text-3xl mb-2 opacity-40"></i>
+                        <p>No messages yet</p>
+                        <p class="text-xs">Start the conversation!</p>
+                    </div>
+                </div>
+
+                <!-- Message Input Area -->
+                <div class="bg-white border-t border-teal-100 p-4">
+                    <div class="flex gap-3 items-center">
+                        <input type="text" id="messageInput" placeholder="Type a message..."
+                               class="flex-1 px-4 py-2.5 border border-teal-200 rounded-xl focus:outline-none focus:border-teal-400 bg-gray-50 text-sm">
+                        <button id="sendMessageBtn" class="btn-primary text-white px-5 py-2.5 rounded-xl transition shadow-md hover:shadow-lg">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROFILE & SETTINGS MODAL - Teal Theme -->
+    <div id="profileModal" class="fixed inset-0 z-50 hidden modal-backdrop items-center justify-center bg-black/50 backdrop-blur-sm" style="display: none;">
+        <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
+            <div class="bg-gradient-to-r from-teal-600 to-teal-700 px-6 py-4 flex justify-between items-center">
+                <h3 class="text-white font-bold text-xl"><i class="fas fa-user-circle"></i> My Profile</h3>
+                <button id="closeModalBtn" class="text-white hover:bg-white/20 rounded-full p-1"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <div class="p-6">
+                <div class="flex flex-col items-center mb-6">
+                    <div class="relative">
+                        <div class="w-24 h-24 rounded-full bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center text-white text-4xl shadow-lg">
+                            <i class="fas fa-user-astronaut"></i>
+                        </div>
+                        <span id="modalStatusDot" class="absolute bottom-1 right-1 w-4 h-4 rounded-full ring-2 ring-white bg-green-500"></span>
+                    </div>
+                    <h2 id="modalUserName" class="text-2xl font-bold text-gray-800 mt-3">Alex Morgan</h2>
+                    <p id="modalUserEmail" class="text-gray-500 text-sm">alex@talk.com</p>
+                    <div class="mt-2">
+                        <span id="modalStatusBadge" class="px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 bg-teal-100 text-teal-700">
+                            <i class="fas fa-circle text-[6px] text-teal-600"></i> Online
+                        </span>
+                    </div>
+                </div>
+                <div class="border-t border-gray-100 pt-4 space-y-3">
+                    <div class="flex items-center gap-3 text-gray-700"><i class="fas fa-calendar-alt w-5 text-teal-500"></i><span class="text-sm">Member since: <strong>January 2024</strong></span></div>
+                    <div class="flex items-center gap-3 text-gray-700"><i class="fas fa-map-marker-alt w-5 text-teal-500"></i><span class="text-sm">Location: <strong>San Francisco, CA</strong></span></div>
+                    <div class="flex items-center gap-3 text-gray-700"><i class="fas fa-phone w-5 text-teal-500"></i><span class="text-sm">Phone: <strong>+1 (555) 123-4567</strong></span></div>
+                    <div class="flex items-center gap-3 text-gray-700"><i class="fas fa-globe w-5 text-teal-500"></i><span class="text-sm">Status: <strong id="profileStatusText" class="text-teal-600">Online</strong></span></div>
+                </div>
+                <div class="mt-6 flex gap-3">
+                    <button id="editProfileBtn" class="flex-1 bg-teal-50 hover:bg-teal-100 text-teal-700 font-medium py-2 rounded-xl"><i class="fas fa-edit"></i> Edit Profile</button>
+                    <button id="logoutFromModalBtn" class="flex-1 bg-red-50 hover:bg-red-100 text-red-600 font-medium py-2 rounded-xl"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal - Teal Theme -->
+    <div id="editProfileModal" class="fixed inset-0 z-[60] hidden modal-backdrop items-center justify-center bg-black/50 backdrop-blur-sm" style="display: none;">
+        <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 overflow-hidden">
+            <div class="bg-gradient-to-r from-teal-600 to-teal-700 px-6 py-3 flex justify-between items-center">
+                <h3 class="text-white font-bold"><i class="fas fa-user-edit"></i> Edit Profile</h3>
+                <button id="closeEditModalBtn" class="text-white hover:bg-white/20 rounded-full p-1"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="p-5">
+                <input type="text" id="editName" placeholder="Full Name" class="w-full mb-3 px-4 py-2 border border-teal-200 rounded-xl focus:outline-none focus:border-teal-400" value="Alex Morgan">
+                <input type="email" id="editEmail" placeholder="Email" class="w-full mb-3 px-4 py-2 border border-teal-200 rounded-xl focus:outline-none focus:border-teal-400" value="alex@talk.com">
+                <input type="text" id="editLocation" placeholder="Location" class="w-full mb-4 px-4 py-2 border border-teal-200 rounded-xl focus:outline-none focus:border-teal-400" value="San Francisco, CA">
+                <button id="saveProfileBtn" class="w-full btn-primary text-white py-2 rounded-xl hover:bg-teal-700">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ======================= MOCK DATA WITH STATUS =======================
+        const allUsers = [
+            { id: 1, name: "Emma Watson", email: "emma@talk.com", avatar: "EW", status: "online", lastSeen: "Online" },
+            { id: 2, name: "James Carter", email: "james@talk.com", avatar: "JC", status: "online", lastSeen: "Active now" },
+            { id: 3, name: "Sophia Lee", email: "sophia@talk.com", avatar: "SL", status: "offline", lastSeen: "2 min ago" },
+            { id: 4, name: "Oliver Chen", email: "oliver@talk.com", avatar: "OC", status: "offline", lastSeen: "15 min ago" },
+            { id: 5, name: "Isabella Martinez", email: "isabella@talk.com", avatar: "IM", status: "offline", lastSeen: "30 min ago" },
+            { id: 6, name: "Liam Johnson", email: "liam@talk.com", avatar: "LJ", status: "online", lastSeen: "Active now" },
+            { id: 7, name: "Mia Rodriguez", email: "mia@talk.com", avatar: "MR", status: "offline", lastSeen: "1 hour ago" },
+            { id: 8, name: "Noah Williams", email: "noah@talk.com", avatar: "NW", status: "online", lastSeen: "Online" },
+            { id: 9, name: "Ava Thompson", email: "ava@talk.com", avatar: "AT", status: "offline", lastSeen: "5 min ago" },
+            { id: 10, name: "Ethan Brown", email: "ethan@talk.com", avatar: "EB", status: "online", lastSeen: "Online" }
+        ];
+
+        let currentUser = {
+            id: 999,
+            name: "Alex Morgan",
+            email: "alex@talk.com",
+            location: "San Francisco, CA",
+            status: "online"
+        };
+
+        let friendsList = [
+            { id: 1, name: "Emma Watson", email: "emma@talk.com", avatar: "EW", status: "online", lastSeen: "Online" },
+            { id: 2, name: "James Carter", email: "james@talk.com", avatar: "JC", status: "online", lastSeen: "Active now" },
+            { id: 4, name: "Oliver Chen", email: "oliver@talk.com", avatar: "OC", status: "offline", lastSeen: "15 min ago" },
+            { id: 6, name: "Liam Johnson", email: "liam@talk.com", avatar: "LJ", status: "online", lastSeen: "Active now" },
+            { id: 8, name: "Noah Williams", email: "noah@talk.com", avatar: "NW", status: "online", lastSeen: "Online" }
+        ];
+
+        let chatMessages = {
+            1: [{ id: 1, senderId: 1, text: "Hey Alex! How are you?", timestamp: "10:30 AM", isOwn: false }, { id: 2, senderId: 999, text: "I'm great! Ready to chat 😊", timestamp: "10:32 AM", isOwn: true }],
+            2: [{ id: 1, senderId: 2, text: "Hi! Did you see the project update?", timestamp: "09:15 AM", isOwn: false }, { id: 2, senderId: 999, text: "Yes, looks perfect!", timestamp: "09:20 AM", isOwn: true }],
+            4: [{ id: 1, senderId: 4, text: "Hello! Let's catch up later?", timestamp: "Yesterday", isOwn: false }],
+            6: [{ id: 1, senderId: 999, text: "Hey Liam, ready for the meeting?", timestamp: "11:00 AM", isOwn: true }, { id: 2, senderId: 6, text: "Absolutely! See you there.", timestamp: "11:02 AM", isOwn: false }],
+            8: [{ id: 1, senderId: 8, text: "Welcome to Talk! 🎉", timestamp: "Yesterday", isOwn: false }, { id: 2, senderId: 999, text: "Thanks Noah!", timestamp: "Yesterday", isOwn: true }]
+        };
+
+        let currentFriend = null;
+        let currentSearchTerm = "";
+
+        function getFriendStatus(friendId) {
+            const user = allUsers.find(u => u.id === friendId);
+            if (user) return { status: user.status, lastSeen: user.lastSeen };
+            return { status: "offline", lastSeen: "Offline" };
+        }
+
+        function updateFriendStatus(friendId, newStatus) {
+            const friend = friendsList.find(f => f.id === friendId);
+            if (friend) { friend.status = newStatus; friend.lastSeen = newStatus === "online" ? "Online" : "Just now"; }
+            const userInAll = allUsers.find(u => u.id === friendId);
+            if (userInAll) { userInAll.status = newStatus; userInAll.lastSeen = newStatus === "online" ? "Online" : "Just now"; }
+            renderFriendList();
+            if (currentFriend && currentFriend.id === friendId) updateChatHeaderStatus(friendId);
+        }
+
+        function updateChatHeaderStatus(friendId) {
+            const statusInfo = getFriendStatus(friendId);
+            const isOnline = statusInfo.status === "online";
+            const statusText = isOnline ? "Online • Active now" : `Offline • ${statusInfo.lastSeen}`;
+            document.getElementById('chatUserStatus').innerHTML = `<i class="fas fa-circle text-[6px] ${isOnline ? 'text-teal-600' : 'text-gray-400'}"></i><span class="${isOnline ? 'text-teal-600' : 'text-gray-500'} ml-1">${statusText}</span>`;
+            const statusDot = document.getElementById('chatHeaderStatusDot');
+            if (statusDot) statusDot.className = `absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full ring-2 ring-white ${isOnline ? 'bg-green-500 status-pulse' : 'bg-gray-400'}`;
+        }
+
+        function renderFriendList() {
+            const container = document.getElementById('friendListContainer');
+            const friendsCountSpan = document.getElementById('friendsCount');
+
+            friendsList = friendsList.map(friend => {
+                const updated = getFriendStatus(friend.id);
+                return { ...friend, status: updated.status, lastSeen: updated.lastSeen };
+            });
+
+            let filteredFriends = friendsList.filter(friend =>
+                friend.name.toLowerCase().includes(currentSearchTerm.toLowerCase()) ||
+                friend.email.toLowerCase().includes(currentSearchTerm.toLowerCase())
+            );
+
+            const onlineCount = filteredFriends.filter(f => f.status === "online").length;
+            document.getElementById('onlineCount').innerText = onlineCount;
+            friendsCountSpan.textContent = filteredFriends.length;
+
+            if (filteredFriends.length === 0) {
+                container.innerHTML = `<div class="text-center py-10 text-teal-400 text-sm"><i class="fas fa-user-plus text-3xl mb-2 opacity-30"></i><p>No friends found</p></div>`;
+                return;
+            }
+
+            container.innerHTML = filteredFriends.map(friend => {
+                const isOnline = friend.status === "online";
+                return `
+                    <div class="friend-item cursor-pointer p-3 rounded-xl transition-all ${currentFriend?.id === friend.id ? 'active' : ''}" data-user-id="${friend.id}">
+                        <div class="flex items-center gap-3">
+                            <div class="relative">
+                                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-teal-400 to-teal-500 flex items-center justify-center text-white font-bold shadow-sm">${friend.avatar}</div>
+                                <span class="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full ring-2 ring-white ${isOnline ? 'bg-green-500 status-pulse' : 'bg-gray-400'}"></span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="font-semibold text-gray-800 text-sm truncate">${friend.name}</p>
+                                <p class="text-xs ${isOnline ? 'text-teal-600' : 'text-gray-500'} flex items-center gap-1">
+                                    <i class="fas fa-circle text-[5px]"></i>
+                                    <span>${isOnline ? 'Online' : 'Offline'}</span>
+                                </p>
+                            </div>
+                            <i class="fas fa-comment text-teal-400 text-sm opacity-60"></i>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.querySelectorAll('.friend-item').forEach(el => {
+                el.addEventListener('click', () => {
+                    const userId = parseInt(el.dataset.userId);
+                    const selectedFriend = friendsList.find(f => f.id === userId);
+                    if (selectedFriend) openChatWithUser(selectedFriend);
+                });
+            });
+        }
+
+        function openChatWithUser(friend) {
+            currentFriend = friend;
+            document.getElementById('noChatSelected').classList.add('hidden');
+            document.getElementById('activeChatPanel').classList.remove('hidden');
+            document.getElementById('chatUserName').innerText = friend.name;
+            document.getElementById('chatAvatar').innerHTML = `<i class="fas fa-user"></i>`;
+            updateChatHeaderStatus(friend.id);
+            renderMessages(friend.id);
+            if (window.innerWidth < 768) document.querySelector('.w-full.md\\:w-96').classList.add('hidden');
+            renderFriendList();
+        }
+
+        function renderMessages(friendId) {
+            const container = document.getElementById('messagesContainer');
+            const messages = chatMessages[friendId] || [];
+            if (messages.length === 0) { container.innerHTML = `<div class="text-center text-teal-400 text-sm py-10"><i class="fas fa-comment-smile text-3xl mb-2 opacity-40"></i><p>No messages yet</p></div>`; return; }
+            container.innerHTML = messages.map(msg => `<div class="flex ${msg.isOwn ? 'justify-end' : 'justify-start'} message-bubble"><div class="max-w-[70%] ${msg.isOwn ? 'bg-teal-600 text-white rounded-2xl rounded-br-none' : 'bg-white border border-teal-200 text-gray-800 rounded-2xl rounded-bl-none'} px-4 py-2 shadow-sm"><p class="text-sm">${escapeHtml(msg.text)}</p><span class="text-[10px] ${msg.isOwn ? 'text-teal-100' : 'text-gray-400'} block text-right mt-1">${msg.timestamp}</span></div></div>`).join('');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function escapeHtml(str) { const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const text = input.value.trim();
+            if (!text || !currentFriend) return;
+            const newMsg = { id: Date.now(), senderId: currentUser.id, text, timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), isOwn: true };
+            if (!chatMessages[currentFriend.id]) chatMessages[currentFriend.id] = [];
+            chatMessages[currentFriend.id].push(newMsg);
+            input.value = '';
+            renderMessages(currentFriend.id);
+            setTimeout(() => {
+                if (currentFriend) {
+                    const replies = ["👍 Got it!", "😊 Thanks!", "💬 Keep chatting!", "🎉 Awesome!"];
+                    const reply = { id: Date.now(), senderId: currentFriend.id, text: replies[Math.floor(Math.random() * replies.length)], timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), isOwn: false };
+                    chatMessages[currentFriend.id].push(reply);
+                    renderMessages(currentFriend.id);
+                }
+            }, 1200);
+        }
+
+        function showToast(msg) { const t = document.createElement('div'); t.className = 'fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-teal-700 text-white px-5 py-2 rounded-full text-sm z-50 shadow-lg'; t.innerText = msg; document.body.appendChild(t); setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 2000); }
+
+        function simulateStatusChanges() {
+            setInterval(() => {
+                friendsList.forEach(friend => {
+                    const randomStatus = Math.random() > 0.75 ? "online" : "offline";
+                    if (friend.status !== randomStatus) updateFriendStatus(friend.id, randomStatus);
+                });
+            }, 6000);
+        }
+
+        // Profile modal logic
+        const profileModal = document.getElementById('profileModal');
+        const editProfileModal = document.getElementById('editProfileModal');
+
+        function openProfileModal() {
+            document.getElementById('modalUserName').innerText = currentUser.name;
+            document.getElementById('modalUserEmail').innerText = currentUser.email;
+            document.getElementById('profileStatusText').innerText = "Online";
+            document.getElementById('profileStatusText').className = "text-teal-600";
+            profileModal.style.display = 'flex';
+        }
+
+        document.getElementById('currentUserProfileBtn').addEventListener('click', openProfileModal);
+        document.getElementById('closeModalBtn').addEventListener('click', () => profileModal.style.display = 'none');
+        document.getElementById('closeEditModalBtn').addEventListener('click', () => editProfileModal.style.display = 'none');
+        document.getElementById('editProfileBtn').addEventListener('click', () => {
+            document.getElementById('editName').value = currentUser.name;
+            document.getElementById('editEmail').value = currentUser.email;
+            document.getElementById('editLocation').value = currentUser.location;
+            editProfileModal.style.display = 'flex';
+        });
+        document.getElementById('saveProfileBtn').addEventListener('click', () => {
+            currentUser.name = document.getElementById('editName').value;
+            currentUser.email = document.getElementById('editEmail').value;
+            currentUser.location = document.getElementById('editLocation').value;
+            document.querySelector('.profile-card-clickable .text-sm.font-semibold').innerText = currentUser.name;
+            document.querySelector('.profile-card-clickable .text-xs.text-gray-500').innerText = currentUser.email;
+            showToast("Profile updated successfully!");
+            editProfileModal.style.display = 'none';
+            profileModal.style.display = 'none';
+        });
+        document.getElementById('logoutFromModalBtn').addEventListener('click', () => window.location.href = 'login.html');
+        profileModal.addEventListener('click', (e) => { if (e.target === profileModal) profileModal.style.display = 'none'; });
+        editProfileModal.addEventListener('click', (e) => { if (e.target === editProfileModal) editProfileModal.style.display = 'none'; });
+
+        // Search and add friends with status
+        const searchInput = document.getElementById('searchUserInput');
+        const searchDiv = document.getElementById('searchResults');
+        searchInput.addEventListener('input', (e) => {
+            currentSearchTerm = e.target.value;
+            if (currentSearchTerm.trim() === "") { searchDiv.classList.add('hidden'); renderFriendList(); return; }
+            const friendIds = friendsList.map(f => f.id);
+            const available = allUsers.filter(u => (u.name.toLowerCase().includes(currentSearchTerm.toLowerCase()) || u.email.toLowerCase().includes(currentSearchTerm.toLowerCase())) && !friendIds.includes(u.id) && u.id !== currentUser.id);
+            if (available.length === 0) searchDiv.innerHTML = `<div class="p-3 text-center text-gray-500">No users</div>`;
+            else searchDiv.innerHTML = available.map(u => `<div class="flex justify-between p-3 border-b items-center"><div class="flex items-center gap-2"><div class="relative"><div class="w-8 h-8 rounded-full bg-gradient-to-r from-teal-400 to-teal-500 flex items-center justify-center text-white text-xs">${u.avatar}</div><span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full ring-1 ring-white ${u.status === 'online' ? 'bg-green-500' : 'bg-gray-400'}"></span></div><div><p class="font-medium">${u.name}</p><p class="text-xs ${u.status === 'online' ? 'text-teal-600' : 'text-gray-400'}">${u.status === 'online' ? '● Online' : '○ Offline'}</p></div></div><button class="add-friend text-teal-600 text-sm bg-teal-50 px-3 py-1 rounded-full" data-id="${u.id}">Add</button></div>`).join('');
+            searchDiv.classList.remove('hidden');
+            document.querySelectorAll('.add-friend').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const uid = parseInt(btn.dataset.id);
+                    const user = allUsers.find(u => u.id === uid);
+                    if (user && !friendsList.find(f => f.id === uid)) {
+                        friendsList.push({ ...user, accepted: true });
+                        if (!chatMessages[uid]) chatMessages[uid] = [];
+                        showToast(`${user.name} added!`);
+                        renderFriendList();
+                        searchDiv.classList.add('hidden');
+                        searchInput.value = '';
+                        currentSearchTerm = '';
+                    }
+                });
+            });
+            renderFriendList();
+        });
+        document.addEventListener('click', (e) => { if (!searchInput.contains(e.target) && !searchDiv.contains(e.target)) searchDiv.classList.add('hidden'); });
+
+        // Initialize
+        document.getElementById('sendMessageBtn').addEventListener('click', sendMessage);
+        document.getElementById('messageInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+        document.getElementById('closeChatBtn').addEventListener('click', () => { if (window.innerWidth < 768) { document.querySelector('.w-full.md\\:w-96').classList.remove('hidden'); document.getElementById('activeChatPanel').classList.add('hidden'); document.getElementById('noChatSelected').classList.remove('hidden'); currentFriend = null; renderFriendList(); } });
+        renderFriendList();
+        simulateStatusChanges();
+    </script>
+</body>
+</html>
