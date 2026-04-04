@@ -67,24 +67,23 @@ class userController extends Controller
     public function sendMessage(Request $request)
 {
     $request->validate([
-        'message' => 'required',
-        'receiver_id' => 'required',
-        'sender_id' => 'required',
-
+        'message'     => 'required|string|max:5000',
+        'receiver_id' => 'required|exists:users,id',
     ]);
-    $message=new Message();
-    $message->sender_id=$request->sender_id;
-    $message->receiver_id=$request->receiver_id;
-    $message->message=$request->message;
-    $message->save();
+
+    $message = Message::create([
+        'sender_id'   => Auth::id(),
+        'receiver_id' => $request->receiver_id,
+        'message'     => $request->message,
+    ]);
 
     if ($request->wantsJson() || $request->ajax()) {
         return response()->json([
             'success' => true,
             'message' => [
-                'id' => $message->id,
+                'id'      => $message->id,
                 'message' => $message->message,
-                'time' => $message->created_at->format('H:i')
+                'time'    => $message->created_at->format('H:i'),
             ]
         ]);
     }

@@ -71,7 +71,6 @@
             <form id="chatForm" method="post" action="{{ route('message.send') }}" class="flex gap-3">
                 @csrf
                 <input type="hidden" name="receiver_id" value="{{ $user->id }}">
-                <input type="hidden" name="sender_id" value="{{ Auth::id() }}">
                 
                 <input type="text" name="message" id="messageInput"
                        placeholder="Type your message..."
