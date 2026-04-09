@@ -97,6 +97,18 @@
 
             // Handle Sending Message
             if (chatForm) {
+                // Explicitly send on Enter key
+                if (messageInput) {
+                    messageInput.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            if (messageInput.value.trim() !== '') {
+                                chatForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+                            }
+                        }
+                    });
+                }
+
                 chatForm.addEventListener('submit', function(e) {
                     e.preventDefault();
                     
