@@ -37,6 +37,7 @@ Route::get('/dashboard', function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/search_user',[ProfileController::class,'search_user'])->name('search_user');
     Route::get('/friend-requests',[userController::class,'friendRequestView'])->name('friend.requests');
+
     Route::get('/chat/{id}', [userController::class, 'show'])->name('chat.show');
     Route::post('/send-message', [userController::class, 'sendMessage'])->name('message.send');
     Route::delete('/message/{id}', [userController::class, 'delete'])

@@ -74,6 +74,7 @@
                     <div>
                         <h1 class="text-3xl font-bold bg-gradient-to-r from-teal-700 to-emerald-600 bg-clip-text text-transparent">Talk</h1>
                         <p class="text-xs text-teal-600 font-medium -mt-1">Chat • Connect • Grow</p>
+
                     </div>
                 </div>
             </div>
@@ -97,8 +98,9 @@
                     <i class="fas fa-users"></i>
                     Your Friends
                 </h2>
+
                 <span id="onlineCount" class="text-xs bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full font-medium flex items-center gap-1">
-                    <i class="fas fa-circle text-[6px]"></i> <span>0</span> online
+                    <i class="fas fa-circle text-[6px]"></i> <a href="{{ route('friend.requests') }}">Friend Requests</a></span>
                 </span>
             </div>
 
@@ -251,5 +253,6 @@
             }
         });
     </script>
+
 </body>
 </html>

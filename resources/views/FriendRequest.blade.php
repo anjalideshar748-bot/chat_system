@@ -19,6 +19,14 @@
                     <i class="fas fa-check"></i> Accept
                 </button>
             </form>
+            <form method="POST" action="{{ Route('friend.request.reject', ['friend_id' => $user->id]) }}">
+                @csrf
+                <button
+                    class="text-sm bg-gradient-to-r from-gray-400 to-gray-500 text-white px-5 py-2 rounded-full hover:from-gray-500 hover:to-gray-600 transition shadow-sm shadow-gray-400/30 flex items-center gap-2"
+                    onclick="return confirm('Are you sure you want to reject the friend request from {{ $user->name }}?');">
+                    <i class="fas fa-times"></i> Reject
+                </button>
+            </form>
         </div>
     @endforeach
 

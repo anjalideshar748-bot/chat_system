@@ -42,6 +42,25 @@ class userController extends Controller
         return redirect()->back();
 
     }
+public function reject($friend_id)
+{
+    $deleted = Friend::where(function ($query) use ($friend_id) {
+            $query->where('user_id', Auth::id())
+                  ->where('friend_id', $friend_id);
+        })
+        ->orWhere(function ($query) use ($friend_id) {
+            $query->where('user_id', $friend_id)
+                  ->where('friend_id', Auth::id());
+        })
+        ->where('status', 'pending')
+        ->delete();
+
+    if ($deleted === 0) {
+        return back()->with('error', 'Friend request not found or already processed.');
+    }
+
+    return back()->with('success', 'Friend request rejected.');
+}   
 
     //chat area
 
@@ -78,8 +97,8 @@ class userController extends Controller
     $sender->generateRsaKeys();
     $receiver->generateRsaKeys();
 
-    // Since RSA cannot directly encrypt long strings (like longText messages), 
-    // we generate an AES key, encrypt the message with it, and then use RSA 
+    // Since RSA cannot directly encrypt long strings (like longText messages),
+    // we generate an AES key, encrypt the message with it, and then use RSA
     // to encrypt the AES key. (Hybrid RSA Encryption)
     $aesKey = openssl_random_pseudo_bytes(32);
     $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('AES-256-CBC'));
