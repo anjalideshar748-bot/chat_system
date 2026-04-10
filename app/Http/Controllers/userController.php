@@ -71,10 +71,32 @@ class userController extends Controller
         'receiver_id' => 'required|exists:users,id',
     ]);
 
+    $sender = Auth::user();
+    $receiver = User::findOrFail($request->receiver_id);
+
+    // Ensure both users have RSA keys generated
+    $sender->generateRsaKeys();
+    $receiver->generateRsaKeys();
+
+    // Since RSA cannot directly encrypt long strings (like longText messages), 
+    // we generate an AES key, encrypt the message with it, and then use RSA 
+    // to encrypt the AES key. (Hybrid RSA Encryption)
+    $aesKey = openssl_random_pseudo_bytes(32);
+    $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('AES-256-CBC'));
+
+    $encryptedMessage = openssl_encrypt($request->message, 'AES-256-CBC', $aesKey, 0, $iv);
+
+    // Write RSA code in backend: encrypting the AES key with RSA Public Keys
+    openssl_public_encrypt($aesKey, $encryptedKeySender, $sender->public_key);
+    openssl_public_encrypt($aesKey, $encryptedKeyReceiver, $receiver->public_key);
+
     $message = Message::create([
-        'sender_id'   => Auth::id(),
-        'receiver_id' => $request->receiver_id,
-        'message'     => $request->message,
+        'sender_id'              => $sender->id,
+        'receiver_id'            => $receiver->id,
+        'encrypted_message'      => base64_encode($encryptedMessage),
+        'encrypted_key_sender'   => base64_encode($encryptedKeySender),
+        'encrypted_key_receiver' => base64_encode($encryptedKeyReceiver),
+        'iv'                     => base64_encode($iv),
     ]);
 
     if ($request->wantsJson() || $request->ajax()) {
@@ -82,9 +104,12 @@ class userController extends Controller
             'success' => true,
             'message' => [
                 'id'      => $message->id,
-                'message' => $message->message,
+                'message' => $request->message,
                 'time'    => $message->created_at->format('H:i'),
-            ]
+            ],
+            // Sending back keys so they can be shown as requested
+            'encryption_key' => $receiver->public_key,
+            'decryption_key' => $receiver->private_key
         ]);
     }
 

@@ -68,7 +68,7 @@ class User extends Authenticatable
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-   
+
 
 /**
  * Get all of the message for the User
@@ -88,5 +88,35 @@ public function message(): HasMany
 public function getIsOnlineAttribute()
 {
     return \Illuminate\Support\Facades\Cache::has('user-is-online-' . $this->id);
+}
+
+/**
+ * Generate RSA keys for the user if they do not exist
+ *
+ * @return void
+ */
+public function generateRsaKeys()
+{
+    if (!$this->public_key || !$this->private_key) {
+        $config = array(
+            "config" => "C:/xampp/php/extras/ssl/openssl.cnf",
+            "digest_alg" => "sha512",
+            "private_key_bits" => 2048,
+            "private_key_type" => OPENSSL_KEYTYPE_RSA,
+        );
+
+        $res = openssl_pkey_new($config);
+
+        // Use Laravel key as passphrase to encrypt the private key
+        $passphrase = config('app.key');
+        openssl_pkey_export($res, $privKey, $passphrase, $config);
+
+        $pubKey = openssl_pkey_get_details($res);
+        $pubKey = $pubKey["key"];
+
+        $this->private_key = $privKey;
+        $this->public_key = $pubKey;
+        $this->save();
+    }
 }
 }

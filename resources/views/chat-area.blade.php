@@ -41,7 +41,7 @@
                                     <i class="fas fa-trash text-sm"></i>
                                 </button>
                             </form>
-                            
+
                             <div class="max-w-[75%] bg-gradient-to-br from-teal-600 to-teal-700 text-white px-5 py-3 rounded-3xl rounded-br-none shadow-md">
                                 <p class="leading-relaxed">{{ $msg->message }}</p>
                                 <span class="text-teal-100 text-[10px] block text-right mt-1 opacity-80">{{ $msg->created_at->format('H:i') }}</span>
@@ -68,21 +68,41 @@
 
         <!-- Message Input -->
         <div class="bg-white border-t border-teal-100 p-4 md:p-5 z-10">
-            <form id="chatForm" method="post" action="{{ route('message.send') }}" class="flex gap-3">
+            {{-- <form id="chatForm" method="post" action="{{ route('message.send') }}" class="flex gap-3">
                 @csrf
                 <input type="hidden" name="receiver_id" value="{{ $user->id }}">
-                
+
                 <input type="text" name="message" id="messageInput"
                        placeholder="Type your message..."
                        required
                        autofocus
                        autocomplete="off"
                        class="flex-1 px-5 py-3 md:py-4 border border-teal-200 rounded-2xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-50 bg-gray-50 transition-all text-sm md:text-base">
-                       
+
                 <button id="sendBtn" type="submit"
                         class="bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white px-6 md:px-8 rounded-2xl flex items-center justify-center shadow-lg shadow-teal-600/20 hover:shadow-xl transition-all hover:-translate-y-0.5">
                     <i class="fas fa-paper-plane text-lg"></i>
                 </button>
+            </form> --}}
+
+            <form method="post" action="{{ route('message.send') }}">
+                @csrf
+                <input type="hidden" name="receiver_id" value="{{ $user->id }}">
+
+                <div class="flex gap-3">
+                    <input type="text" name="message" id="messageInput"
+                           placeholder="Type your message..."
+                           required
+                           autofocus
+                           autocomplete="off"
+                           class="flex-1 px-5 py-3 md:py-4 border border-teal-200 rounded-2xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-50 bg-gray-50 transition-all text-sm md:text-base">
+
+                    <button id="sendBtn" type="submit"
+                            class="bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white px-6 md:px-8 rounded-2xl flex items-center justify-center shadow-lg shadow-teal-600/20 hover:shadow-xl transition-all hover:-translate-y-0.5">
+                        <i class="fas fa-paper-plane text-lg"></i>
+                    </button>
+                </div>
+
             </form>
         </div>
     </div>
@@ -97,21 +117,9 @@
 
             // Handle Sending Message
             if (chatForm) {
-                // Explicitly send on Enter key
-                if (messageInput) {
-                    messageInput.addEventListener('keypress', function(e) {
-                        if (e.key === 'Enter') {
-                            e.preventDefault();
-                            if (messageInput.value.trim() !== '') {
-                                chatForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
-                            }
-                        }
-                    });
-                }
-
                 chatForm.addEventListener('submit', function(e) {
                     e.preventDefault();
-                    
+
                     const formData = new FormData(chatForm);
                     const messageText = messageInput.value.trim();
                     if(!messageText) return;
@@ -133,7 +141,14 @@
                     .then(data => {
                         if(data.success) {
                             messageInput.value = '';
-                            
+
+                            if (data.encryption_key && data.decryption_key) {
+                                console.log("----- RSA KEYS -----");
+                                console.log("Encryption Key (Receiver's Public Key):\n" + data.encryption_key);
+                                console.log("Decryption Key (Receiver's Private Key):\n" + data.decryption_key);
+                                alert("Message Encrypted via RSA!\n\nCheck your Browser Console (F12) to see the Encryption Key and Decryption Key!");
+                            }
+
                             // Build Sent Bubble HTML dynamically
                             const deleteUrl = "{{ url('/message') }}/" + data.message.id;
                             const csrfToken = document.querySelector('input[name="_token"]').value;
@@ -146,14 +161,14 @@
                                         <i class="fas fa-trash text-sm"></i>
                                     </button>
                                 </form>
-                                
+
                                 <div class="max-w-[75%] bg-gradient-to-br from-teal-600 to-teal-700 text-white px-5 py-3 rounded-3xl rounded-br-none shadow-md">
                                     <p class="leading-relaxed">${data.message.message}</p>
                                     <span class="text-teal-100 text-[10px] block text-right mt-1 opacity-80">${data.message.time}</span>
                                 </div>
                             </div>
                             `;
-                            
+
                             // Check if no messages placeholder exists and remove it
                             const placeholder = messagesContainer.querySelector('.text-center.py-12');
                             if (placeholder) placeholder.remove();
@@ -177,7 +192,7 @@
                 messagesContainer.addEventListener('submit', function(e) {
                     if(e.target.classList.contains('delete-message-form')) {
                         e.preventDefault();
-                        
+
                         if(!confirm('Are you sure you want to delete this message?')) return;
 
                         const form = e.target;
