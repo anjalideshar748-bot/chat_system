@@ -60,7 +60,7 @@ public function reject($friend_id)
     }
 
     return back()->with('success', 'Friend request rejected.');
-}   
+}
 
     //chat area
 
@@ -117,7 +117,7 @@ public function reject($friend_id)
         'encrypted_key_receiver' => base64_encode($encryptedKeyReceiver),
         'iv'                     => base64_encode($iv),
     ]);
-
+    
     if ($request->wantsJson() || $request->ajax()) {
         return response()->json([
             'success' => true,
