@@ -6,7 +6,7 @@ use App\Models\User;
 use App\Http\Controllers\userController;
 use App\Models\friend;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Broadcast;
 
 Route::get('/', function () {
     return view('welcome');
@@ -60,5 +60,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/friend-request/reject/{friend_id}', [userController::class, 'reject'])->name('friend.request.reject');
 
 });
+
+Broadcast::routes();
 
 

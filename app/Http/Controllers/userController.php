@@ -113,11 +113,12 @@ public function reject($friend_id)
         'sender_id'              => $sender->id,
         'receiver_id'            => $receiver->id,
         'encrypted_message'      => base64_encode($encryptedMessage),
+        'file'                   => $request->file ? base64_encode(file_get_contents($request->file)) : null,
         'encrypted_key_sender'   => base64_encode($encryptedKeySender),
         'encrypted_key_receiver' => base64_encode($encryptedKeyReceiver),
         'iv'                     => base64_encode($iv),
     ]);
-    
+
     if ($request->wantsJson() || $request->ajax()) {
         return response()->json([
             'success' => true,

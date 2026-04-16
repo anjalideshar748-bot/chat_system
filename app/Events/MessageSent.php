@@ -2,60 +2,44 @@
 
 namespace App\Events;
 
-use App\Models\Message;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class MessageSent implements ShouldBroadcastNow
+class MessageSent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public Message $message;
-    public string  $plainText;
-    public int     $senderId;
-
     /**
-     * @param  Message  $message   The persisted message model.
-     * @param  string   $plainText The original (unencrypted) message text so the
-     *                             receiver can display it without client-side decryption.
+     * Create a new event instance.
      */
-    public function __construct(Message $message, string $plainText)
-    {
-        $this->message   = $message;
-        $this->plainText = $plainText;
-        $this->senderId  = $message->sender_id;
+    public $message;
+    public $userId;
+
+
+     public function __construct($message, $userId)
+     {
+         $this->message = $message;
+         $this->userId = $userId;
+
+
+        
     }
 
-    /**
-     * Broadcast on the private channel of the receiver so only they hear it.
-     */
-    public function broadcastOn(): Channel
-    {
-        return new PrivateChannel('chat.' . $this->message->receiver_id);
-    }
 
     /**
-     * The payload sent to the client.
+     * Get the channels the event should broadcast on.
+     *
+     * @return array<int, \Illuminate\Broadcasting\Channel>
      */
-    public function broadcastWith(): array
+    public function broadcastOn(): array
     {
         return [
-            'id'        => $this->message->id,
-            'message'   => $this->plainText,
-            'sender_id' => $this->message->sender_id,
-            'time'      => $this->message->created_at->format('H:i'),
+            new PrivateChannel('MessageSent.' . $this->userId),
         ];
-    }
-
-    /**
-     * Use a simple event name without namespacing.
-     */
-    public function broadcastAs(): string
-    {
-        return 'MessageSent';
     }
 }

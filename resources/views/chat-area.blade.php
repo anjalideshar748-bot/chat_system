@@ -52,6 +52,13 @@
                         <div class="flex justify-start message-bubble">
                             <div class="max-w-[75%] bg-white border border-teal-100 px-5 py-3 rounded-3xl rounded-bl-none shadow-sm">
                                 <p class="text-gray-800 leading-relaxed">{{ $msg->message }}</p>
+                                <img src="{{ $msg->file }}" alt="" class="mt-2 rounded-lg shadow-md max-w-full">
+                                 @if($msg->file_path)
+                                    <a href="{{ $msg->file }}" target="_blank" class="text-teal-500 hover:text-teal-700 text-sm mt-1 inline-block">
+                                        <i class="fas fa-download mr-1"></i> Download Attachment
+                                    </a>
+
+                                @endif
                                 <span class="text-gray-400 text-[10px] block text-right mt-1">{{ $msg->created_at->format('H:i') }}</span>
                             </div>
                         </div>
@@ -92,11 +99,10 @@
                 <div class="flex gap-3">
                     <input type="text" name="message" id="messageInput"
                            placeholder="Type your message..."
-                           required
                            autofocus
                            autocomplete="off"
                            class="flex-1 px-5 py-3 md:py-4 border border-teal-200 rounded-2xl focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-50 bg-gray-50 transition-all text-sm md:text-base">
-
+                     <input type="file"  name="file" id="messageFile">
                     <button id="sendBtn" type="submit"
                             class="bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white px-6 md:px-8 rounded-2xl flex items-center justify-center shadow-lg shadow-teal-600/20 hover:shadow-xl transition-all hover:-translate-y-0.5">
                         <i class="fas fa-paper-plane text-lg"></i>
@@ -224,5 +230,19 @@
                 });
             }
         });
+        setTimeout(()=>{
+            window.Echo.channel('MessageSent')
+            .listen('MessageSent', (e) => {
+                console.log(e.message);
+                // Optionally, you can implement real-time message updates here
+            });
+            window.Echo.private('MessageSent.{{ Auth::id() }}')
+            .listen('MessageSent', (e) => {
+                console.log("Private Channel:", e.message);
+        }, 200);
+
     </script>
+
+
+
 </x-default-page>
