@@ -83,7 +83,60 @@ public function reject($friend_id)
 
     return view('chat-area', compact('user','messages'));
 }
-    public function sendMessage(Request $request)
+//     public function sendMessage(Request $request)
+// {
+//     $request->validate([
+//         'message'     => 'required|string|max:5000',
+//         'receiver_id' => 'required|exists:users,id',
+//     ]);
+
+//     $sender = Auth::user();
+//     $receiver = User::findOrFail($request->receiver_id);
+
+//     // Ensure both users have RSA keys generated
+//     $sender->generateRsaKeys();
+//     $receiver->generateRsaKeys();
+
+//     // Since RSA cannot directly encrypt long strings (like longText messages),
+//     // we generate an AES key, encrypt the message with it, and then use RSA
+//     // to encrypt the AES key. (Hybrid RSA Encryption)
+//     $aesKey = openssl_random_pseudo_bytes(32);
+//     $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('AES-256-CBC'));
+
+//     $encryptedMessage = openssl_encrypt($request->message, 'AES-256-CBC', $aesKey, 0, $iv);
+
+//     // Write RSA code in backend: encrypting the AES key with RSA Public Keys
+//     openssl_public_encrypt($aesKey, $encryptedKeySender, $sender->public_key);
+//     openssl_public_encrypt($aesKey, $encryptedKeyReceiver, $receiver->public_key);
+
+//     $message = Message::create([
+//         'sender_id'              => $sender->id,
+//         'receiver_id'            => $receiver->id,
+//         'encrypted_message'      => base64_encode($encryptedMessage),
+//         'file'                   => $request->file ? base64_encode(file_get_contents($request->file)) : null,
+//         'encrypted_key_sender'   => base64_encode($encryptedKeySender),
+//         'encrypted_key_receiver' => base64_encode($encryptedKeyReceiver),
+//         'iv'                     => base64_encode($iv),
+//     ]);
+
+//     if ($request->wantsJson() || $request->ajax()) {
+//         return response()->json([
+//             'success' => true,
+//             'message' => [
+//                 'id'      => $message->id,
+//                 'message' => $request->message,
+//                 'time'    => $message->created_at->format('H:i'),
+//             ],
+//             // Sending back keys so they can be shown as requested
+//             'encryption_key' => $receiver->public_key,
+//             'decryption_key' => $receiver->private_key
+//         ]);
+//     }
+
+//     return back();
+// }
+
+public function sendMessage(Request $request)
 {
     $request->validate([
         'message'     => 'required|string|max:5000',
@@ -93,19 +146,14 @@ public function reject($friend_id)
     $sender = Auth::user();
     $receiver = User::findOrFail($request->receiver_id);
 
-    // Ensure both users have RSA keys generated
     $sender->generateRsaKeys();
     $receiver->generateRsaKeys();
 
-    // Since RSA cannot directly encrypt long strings (like longText messages),
-    // we generate an AES key, encrypt the message with it, and then use RSA
-    // to encrypt the AES key. (Hybrid RSA Encryption)
     $aesKey = openssl_random_pseudo_bytes(32);
     $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('AES-256-CBC'));
 
     $encryptedMessage = openssl_encrypt($request->message, 'AES-256-CBC', $aesKey, 0, $iv);
 
-    // Write RSA code in backend: encrypting the AES key with RSA Public Keys
     openssl_public_encrypt($aesKey, $encryptedKeySender, $sender->public_key);
     openssl_public_encrypt($aesKey, $encryptedKeyReceiver, $receiver->public_key);
 
@@ -113,26 +161,27 @@ public function reject($friend_id)
         'sender_id'              => $sender->id,
         'receiver_id'            => $receiver->id,
         'encrypted_message'      => base64_encode($encryptedMessage),
-        'file'                   => $request->file ? base64_encode(file_get_contents($request->file)) : null,
         'encrypted_key_sender'   => base64_encode($encryptedKeySender),
         'encrypted_key_receiver' => base64_encode($encryptedKeyReceiver),
         'iv'                     => base64_encode($iv),
+        'file'                   => $request->hasFile('file') ? base64_encode(file_get_contents($request->file('file'))) : null,
     ]);
 
+    // === IMPORTANT: Broadcast the event ===
+    broadcast(new \App\Events\MessageSent($message, $receiver->id))->toOthers();
+
+    // For AJAX response (your current JS)
     if ($request->wantsJson() || $request->ajax()) {
         return response()->json([
             'success' => true,
             'message' => [
                 'id'      => $message->id,
-                'message' => $request->message,
+                'message' => $request->message,   // plain text for sender
                 'time'    => $message->created_at->format('H:i'),
-            ],
-            // Sending back keys so they can be shown as requested
-            'encryption_key' => $receiver->public_key,
-            'decryption_key' => $receiver->private_key
+            ]
         ]);
     }
-
+     echo "Message sent successfully";
     return back();
 }
 public function delete($id, Request $request)

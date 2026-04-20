@@ -114,7 +114,7 @@
     </div>
 
     <!-- AJAX Chat Interaction Logic -->
-    <script>
+    {{-- <script>
         document.addEventListener('DOMContentLoaded', function() {
             const chatForm = document.getElementById('chatForm');
             const messagesContainer = document.getElementById('messagesContainer');
@@ -239,9 +239,47 @@
             window.Echo.private('MessageSent.{{ Auth::id() }}')
             .listen('MessageSent', (e) => {
                 console.log("Private Channel:", e.message);
+            })
         }, 200);
 
-    </script>
+    </script> --}}
+
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+
+    const messagesContainer = document.getElementById('messagesContainer');
+    const currentUserId = {{ Auth::id() }};
+    const chatUserId = {{ $user->id }};
+
+    // Listen for incoming messages in real-time
+    window.Echo.private(`chat.${currentUserId}`)
+        .listen('MessageSent', (e) => {
+            // Only show message if it's from the current chat user
+            if (e.sender_id == chatUserId) {
+
+                const msgHtml = `
+                    <div class="flex justify-start message-bubble" style="animation: fadeInUp 0.3s ease-out;">
+                        <div class="max-w-[75%] bg-white border border-teal-100 px-5 py-3 rounded-3xl rounded-bl-none shadow-sm">
+                            <p class="text-gray-800 leading-relaxed">${e.message}</p>
+                            <span class="text-gray-400 text-[10px] block text-right mt-1">${e.time}</span>
+                        </div>
+                    </div>
+                `;
+
+                // Remove "No messages yet" placeholder if exists
+                const placeholder = messagesContainer.querySelector('.text-center.py-12');
+                if (placeholder) placeholder.remove();
+
+                messagesContainer.insertAdjacentHTML('beforeend', msgHtml);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+        });
+
+    // Optional: Listen for your own sent messages (if needed)
+    // window.Echo.private(`chat.${currentUserId}`).listen(...)
+
+});
+</script>
 
 
 
