@@ -5,8 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Friend;
 use App\Models\Message;
 use App\Models\User;
+use App\Support\AttachmentCompression;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 
 
@@ -83,6 +87,37 @@ public function reject($friend_id)
 
     return view('chat-area', compact('user','messages'));
 }
+
+public function attachment(Message $message, Request $request)
+{
+    abort_unless(
+        in_array(Auth::id(), [$message->sender_id, $message->receiver_id], true),
+        403
+    );
+
+    $fileMeta = $message->file_meta;
+
+    if (! $fileMeta || empty($fileMeta['storage_path'])) {
+        abort(404);
+    }
+
+    $absolutePath = storage_path('app/' . ltrim($fileMeta['storage_path'], '/'));
+
+    if (! File::exists($absolutePath)) {
+        abort(404);
+    }
+
+    $storedContents = File::get($absolutePath);
+    $originalContents = AttachmentCompression::decompress($storedContents, $fileMeta['compression'] ?? null);
+    $disposition = $request->boolean('download') ? 'attachment' : 'inline';
+
+    return response($originalContents, 200, [
+        'Content-Type' => $fileMeta['mime'] ?? 'application/octet-stream',
+        'Content-Length' => strlen($originalContents),
+        'Content-Disposition' => $disposition . '; filename="' . addslashes($fileMeta['name'] ?? 'attachment') . '"',
+        'Cache-Control' => 'private, max-age=0, must-revalidate',
+    ]);
+}
 //     public function sendMessage(Request $request)
 // {
 //     $request->validate([
@@ -139,9 +174,20 @@ public function reject($friend_id)
 public function sendMessage(Request $request)
 {
     $request->validate([
-        'message'     => 'required|string|max:5000',
+        'message'     => 'nullable|string|max:5000',
         'receiver_id' => 'required|exists:users,id',
+        'file'        => 'nullable|file|max:5120',
+        'media_url'   => 'nullable|url|max:2048',
+        'media_name'  => 'nullable|string|max:255',
+        'media_mime'  => 'nullable|string|max:100',
     ]);
+
+    if (!$request->filled('message') && !$request->hasFile('file') && !$request->filled('media_url')) {
+        return response()->json([
+            'success' => false,
+            'error' => 'Message or file is required.',
+        ], 422);
+    }
 
     $sender = Auth::user();
     $receiver = User::findOrFail($request->receiver_id);
@@ -152,36 +198,84 @@ public function sendMessage(Request $request)
     $aesKey = openssl_random_pseudo_bytes(32);
     $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('AES-256-CBC'));
 
-    $encryptedMessage = openssl_encrypt($request->message, 'AES-256-CBC', $aesKey, 0, $iv);
+    $plainMessage = (string) $request->input('message', '');
+    $encryptedMessage = openssl_encrypt($plainMessage, 'AES-256-CBC', $aesKey, 0, $iv);
 
     openssl_public_encrypt($aesKey, $encryptedKeySender, $sender->public_key);
     openssl_public_encrypt($aesKey, $encryptedKeyReceiver, $receiver->public_key);
 
-    $message = Message::create([
+    $filePayload = null;
+
+    if ($request->hasFile('file')) {
+        $uploadedFile = $request->file('file');
+        $directory = storage_path('app/chat-files-compressed');
+        File::ensureDirectoryExists($directory);
+
+        $originalName = $uploadedFile->getClientOriginalName();
+        $mimeType = $uploadedFile->getClientMimeType() ?: 'application/octet-stream';
+        $originalContents = File::get($uploadedFile->getRealPath());
+        $compressedFile = AttachmentCompression::compress($originalContents);
+        $extension = $uploadedFile->getClientOriginalExtension();
+        $storedFileName = Str::uuid()->toString() . ($extension ? '.' . $extension : '') . '.bin';
+        File::put($directory . DIRECTORY_SEPARATOR . $storedFileName, $compressedFile['contents']);
+
+        $filePayload = json_encode([
+            'name' => $originalName,
+            'mime' => $mimeType,
+            'size' => $compressedFile['original_size'],
+            'compressed_size' => $compressedFile['stored_size'],
+            'compression' => $compressedFile['algorithm'],
+            'storage_path' => 'chat-files-compressed/' . $storedFileName,
+        ]);
+    } elseif ($request->filled('media_url')) {
+        $filePayload = json_encode([
+            'url' => $request->string('media_url')->toString(),
+            'name' => $request->string('media_name')->toString() ?: 'Media',
+            'mime' => $request->string('media_mime')->toString() ?: 'image/gif',
+            'size' => null,
+        ]);
+    }
+
+    $messagePayload = [
         'sender_id'              => $sender->id,
         'receiver_id'            => $receiver->id,
         'encrypted_message'      => base64_encode($encryptedMessage),
         'encrypted_key_sender'   => base64_encode($encryptedKeySender),
         'encrypted_key_receiver' => base64_encode($encryptedKeyReceiver),
         'iv'                     => base64_encode($iv),
-        'file'                   => $request->hasFile('file') ? base64_encode(file_get_contents($request->file('file'))) : null,
-    ]);
+        'file'                   => $filePayload,
+    ];
 
-    // === IMPORTANT: Broadcast the event ===
-    broadcast(new \App\Events\MessageSent($message, $receiver->id))->toOthers();
+    $message = Message::create($messagePayload);
 
-    // For AJAX response (your current JS)
+    $message->load('sender');
+
+    $realtimeDelivered = true;
+
+    try {
+        broadcast(new \App\Events\MessageSent($message))->toOthers();
+    } catch (\Throwable $e) {
+        $realtimeDelivered = false;
+        Log::warning('Message broadcast failed', [
+            'message_id' => $message->id,
+            'receiver_id' => $receiver->id,
+            'error' => $e->getMessage(),
+        ]);
+    }
+
     if ($request->wantsJson() || $request->ajax()) {
         return response()->json([
             'success' => true,
+            'realtime' => $realtimeDelivered,
             'message' => [
                 'id'      => $message->id,
-                'message' => $request->message,   // plain text for sender
+                'message' => $message->message,
+                'file'    => $message->file_meta,
                 'time'    => $message->created_at->format('H:i'),
             ]
         ]);
     }
-     echo "Message sent successfully";
+
     return back();
 }
 public function delete($id, Request $request)
@@ -191,6 +285,21 @@ public function delete($id, Request $request)
     if ($message->sender_id != Auth::id()) {
         if ($request->wantsJson() || $request->ajax()) return response()->json(['error' => 'Unauthorized'], 403);
         abort(403);
+    }
+
+    $fileMeta = $message->file_meta;
+    if ($fileMeta) {
+        if (!empty($fileMeta['storage_path'])) {
+            $absolutePath = storage_path('app/' . $fileMeta['storage_path']);
+            if (File::exists($absolutePath)) {
+                File::delete($absolutePath);
+            }
+        } elseif (!empty($fileMeta['path'])) {
+            $legacyPath = public_path($fileMeta['path']);
+            if (File::exists($legacyPath)) {
+                File::delete($legacyPath);
+            }
+        }
     }
 
     $message->delete();
@@ -203,10 +312,3 @@ public function delete($id, Request $request)
 }
 
 }
-
-
-
-
-
-
-

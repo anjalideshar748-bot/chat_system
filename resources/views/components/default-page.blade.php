@@ -58,21 +58,22 @@
         }
     </style>
 </head>
-<body class="h-screen overflow-hidden">
+<body class="min-h-screen overflow-hidden md:h-screen">
+    @php($isChatRoute = request()->routeIs('chat.show'))
 
-    <div class="flex h-screen w-full">
+    <div class="flex h-screen w-full flex-col md:flex-row">
 
         <!-- ==================== LEFT SIDEBAR ==================== -->
-        <div class="w-full md:w-96 lg:w-96 bg-white/95 backdrop-blur-sm border-r border-teal-100 flex flex-col shadow-2xl z-10">
+        <div class="{{ $isChatRoute ? 'hidden md:flex' : 'flex' }} w-full md:w-96 lg:w-[25rem] bg-white/95 backdrop-blur-sm border-b md:border-b-0 md:border-r border-teal-100 flex-col shadow-2xl z-10">
 
             <!-- App Header -->
-            <div class="p-5 border-b border-teal-100 sidebar-header bg-gradient-to-r from-teal-50 to-emerald-50">
+            <div class="p-4 md:p-5 border-b border-teal-100 sidebar-header bg-gradient-to-r from-teal-50 to-emerald-50">
                 <div class="flex items-center gap-3">
                     <div class="talk-logo w-11 h-11 rounded-2xl flex items-center justify-center">
                         <i class="fas fa-comment-dots text-white text-2xl"></i>
                     </div>
                     <div>
-                        <h1 class="text-3xl font-bold bg-gradient-to-r from-teal-700 to-emerald-600 bg-clip-text text-transparent">Talk</h1>
+                        <h1 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-teal-700 to-emerald-600 bg-clip-text text-transparent">Talk</h1>
                         <p class="text-xs text-teal-600 font-medium -mt-1">Chat • Connect • Grow</p>
 
                     </div>
@@ -93,19 +94,19 @@
             </div>
 
             <!-- Friends Header -->
-            <div class="px-5 pt-4 pb-3 flex justify-between items-center border-b border-teal-100">
+            <div class="px-4 md:px-5 pt-4 pb-3 flex justify-between items-center border-b border-teal-100 gap-2">
                 <h2 class="text-xs font-semibold text-teal-600 uppercase tracking-widest flex items-center gap-2">
                     <i class="fas fa-users"></i>
                     Your Friends
                 </h2>
 
-                <span id="onlineCount" class="text-xs bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full font-medium flex items-center gap-1">
-                    <i class="fas fa-circle text-[6px]"></i> <a href="{{ route('friend.requests') }}">Friend Requests</a></span>
+                <span id="onlineCount" class="text-[11px] bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full font-medium flex items-center gap-1 shrink-0">
+                    <i class="fas fa-circle text-[6px]"></i> <a href="{{ route('friend.requests') }}" class="whitespace-nowrap">Friend Requests</a></span>
                 </span>
             </div>
 
             <!-- Friend List -->
-            <div id="friendListContainer" class="flex-1 overflow-y-auto p-3 space-y-1">
+            <div id="friendListContainer" class="flex-1 overflow-y-auto p-2 md:p-3 space-y-1">
                 <!-- Will be populated by JavaScript / Livewire / Blade -->
                 @if($friends->count() > 0)
                     @foreach($friends as $friend)
@@ -141,7 +142,7 @@
             </div>
 
             <!-- Current User -->
-            <div onclick="openProfileModal()" class="p-4 border-t border-teal-100 bg-gradient-to-r from-teal-50 to-white cursor-pointer hover:bg-teal-50">
+            <div onclick="openProfileModal()" class="hidden md:block p-4 border-t border-teal-100 bg-gradient-to-r from-teal-50 to-white cursor-pointer hover:bg-teal-50">
                 <div class="flex items-center gap-3">
                     <div class="relative">
                         @if(auth()->user()->profile_photo_url)
@@ -165,7 +166,7 @@
         </div>
 
         <!-- ==================== CHAT AREA ==================== -->
-        <div class="flex-1 flex flex-col bg-gradient-to-br from-teal-50/70 to-white">
+        <div class="{{ $isChatRoute ? 'flex' : 'hidden md:flex' }} flex-1 min-h-0 flex-col bg-gradient-to-br from-teal-50/70 to-white">
             {{ $slot }}
         </div>
     </div>

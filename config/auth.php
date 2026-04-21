@@ -2,6 +2,8 @@
 
 return [
 
+    'password_hmac_key' => env('AUTH_PASSWORD_HMAC_KEY', env('APP_KEY')),
+
     /*
     |--------------------------------------------------------------------------
     | Authentication Defaults

@@ -40,6 +40,7 @@ Route::get('/dashboard', function () {
 
     Route::get('/chat/{id}', [userController::class, 'show'])->name('chat.show');
     Route::post('/send-message', [userController::class, 'sendMessage'])->name('message.send');
+    Route::get('/message/{message}/attachment', [userController::class, 'attachment'])->name('message.attachment');
     Route::delete('/message/{id}', [userController::class, 'delete'])
     ->name('message.delete');
 
@@ -62,5 +63,4 @@ Route::middleware('auth')->group(function () {
 });
 
 Broadcast::routes();
-
 

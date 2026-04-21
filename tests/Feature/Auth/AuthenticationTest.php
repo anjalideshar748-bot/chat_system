@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\User;
+use App\Support\PasswordHmac;
+use Illuminate\Support\Facades\Hash;
 
 test('login screen can be rendered', function () {
     $response = $this->get('/login');
@@ -10,6 +12,21 @@ test('login screen can be rendered', function () {
 
 test('users can authenticate using the login screen', function () {
     $user = User::factory()->create();
+
+    $response = $this->post('/login', [
+        'email' => $user->email,
+        'password' => 'password',
+    ]);
+
+    $this->assertAuthenticated();
+    $response->assertRedirect(route('dashboard', absolute: false));
+    expect(Hash::check(PasswordHmac::transform('password'), $user->refresh()->password))->toBeTrue();
+});
+
+test('users with hmac protected passwords can authenticate using the login screen', function () {
+    $user = User::factory()->create([
+        'password' => Hash::make(PasswordHmac::transform('password')),
+    ]);
 
     $response = $this->post('/login', [
         'email' => $user->email,

@@ -1,7 +1,9 @@
 <?php
 
 use App\Models\User;
+use App\Support\PasswordHmac;
 use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 
 test('reset password link screen can be rendered', function () {
@@ -54,6 +56,9 @@ test('password can be reset with valid token', function () {
         $response
             ->assertSessionHasNoErrors()
             ->assertRedirect(route('login'));
+
+        expect(Hash::check(PasswordHmac::transform('password'), $user->refresh()->password))->toBeTrue();
+        expect(Hash::check('password', $user->password))->toBeFalse();
 
         return true;
     });

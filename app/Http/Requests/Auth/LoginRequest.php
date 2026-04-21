@@ -2,9 +2,12 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\User;
+use App\Support\PasswordHmac;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -41,13 +44,36 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        $user = User::where('email', $this->string('email'))->first();
+        $password = $this->string('password')->toString();
+        $remember = $this->boolean('remember');
+
+        if (! $user) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
             ]);
         }
+
+        $matchesHmac = Hash::check(PasswordHmac::transform($password), $user->password);
+        $matchesLegacy = ! $matchesHmac && Hash::check($password, $user->password);
+
+        if (! $matchesHmac && ! $matchesLegacy) {
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'email' => trans('auth.failed'),
+            ]);
+        }
+
+        if ($matchesLegacy) {
+            $user->forceFill([
+                'password' => Hash::make(PasswordHmac::transform($password)),
+            ])->save();
+        }
+
+        Auth::login($user, $remember);
 
         RateLimiter::clear($this->throttleKey());
     }
